@@ -1,0 +1,4 @@
+.vagrant/*
+pkg/*
+Gemfile.lock
+test-*
