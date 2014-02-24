@@ -1,26 +1,27 @@
-require "i18n"
+require 'i18n'
 
 module VagrantPlugins
   module VCenter
     module Action
+      # This class resumes the VM when it's suspended.
       class Resume
-
         def initialize(app, env)
           @app = app
-          @logger = Log4r::Logger.new("vagrant_vcenter::action::resume")
+          @logger = Log4r::Logger.new('vagrant_vcenter::action::resume')
         end
 
         def call(env)
-
           config = env[:machine].provider_config
-          dc = config.vcenter_cnx.serviceInstance.find_datacenter(config.datacenter_name) or abort "datacenter not found"
+          # FIXME: Raise a correct exception
+          dc = config.vcenter_cnx.serviceInstance.find_datacenter(
+               config.datacenter_name) or abort 'datacenter not found'
           root_vm_folder = dc.vmFolder
           vm = root_vm_folder.findByUuid(env[:machine].id)
 
           # Poweroff VM
-          env[:ui].info("Powering on VM...")
+          env[:ui].info('Powering on VM...')
           vm.PowerOnVM_Task.wait_for_completion
-  
+
           @app.call env
         end
       end

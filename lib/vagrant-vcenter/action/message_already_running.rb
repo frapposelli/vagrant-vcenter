@@ -1,14 +1,14 @@
 module VagrantPlugins
   module VCenter
     module Action
+      # Prints out a message that the VM is already running.
       class MessageAlreadyRunning
         def initialize(app, env)
           @app = app
         end
 
         def call(env)
-          # FIXME: This error should be categorized
-          env[:ui].info(I18n.t("vagrant_vcenter.vm_already_running"))
+          env[:ui].info(I18n.t('vagrant_vcenter.power.vm_already_running'))
           @app.call(env)
         end
       end

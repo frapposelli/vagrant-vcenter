@@ -1,8 +1,9 @@
-require "i18n"
+require 'i18n'
 
 module VagrantPlugins
   module VCenter
     module Action
+      # This class sets the state to suspended if the VM is suspended.
       class IsPaused
         def initialize(app, env)
           @app = app

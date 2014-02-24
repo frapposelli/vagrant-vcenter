@@ -27,6 +27,8 @@ require 'vagrant/util/which'
 module VagrantPlugins
   module VCenter
     module Action
+      # This class syncs Vagrant folders using RSYNC, this code has been ported
+      # from vagrant-aws (https://github.com/mitchellh/vagrant-aws)
       class SyncFolders
         include Vagrant::Util::ScopedHashOverride
 
@@ -41,14 +43,14 @@ module VagrantPlugins
           ssh_info = env[:machine].ssh_info
 
           unless Vagrant::Util::Which.which('rsync')
-            env[:ui].warn(I18n.t('vagrant_vcenter.rsync_not_found_warning',
+            env[:ui].warn(I18n.t('vagrant_vcenter.sync.rsync_not_found_warning',
                                  :side => 'host'))
             return
           end
 
           if env[:machine].communicate.execute('which rsync',
                                                :error_check => false) != 0
-            env[:ui].warn(I18n.t('vagrant_vcenter.rsync_not_found_warning',
+            env[:ui].warn(I18n.t('vagrant_vcenter.sync.rsync_not_found_warning',
                                  :side => 'guest'))
             return
           end
@@ -71,7 +73,7 @@ module VagrantPlugins
               hostpath = hostpath.gsub(/^(\w):/) { "/cygdrive/\1" }
             end
 
-            env[:ui].info(I18n.t('vagrant_vcenter.rsync_folder',
+            env[:ui].info(I18n.t('vagrant_vcenter.sync.rsync_folder',
                                  :hostpath => hostpath,
                                  :guestpath => guestpath))
 

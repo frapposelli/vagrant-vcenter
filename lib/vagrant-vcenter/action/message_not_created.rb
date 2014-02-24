@@ -1,14 +1,14 @@
 module VagrantPlugins
   module VCenter
     module Action
+      # Prints out a message that the VM has not yet been created.
       class MessageNotCreated
         def initialize(app, env)
           @app = app
         end
 
         def call(env)
-          # FIXME: this error should be categorized
-          env[:ui].info(I18n.t("vCenter.vm_not_created"))
+          env[:ui].info(I18n.t('vagrant_vcenter.power.vm_not_created'))
           @app.call(env)
         end
       end
