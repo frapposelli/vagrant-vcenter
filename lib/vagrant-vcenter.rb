@@ -2,6 +2,7 @@ require 'pathname'
 require 'vagrant-vcenter/plugin'
 
 module VagrantPlugins
+  # Initialize the plugin.
   module VCenter
     lib_path = Pathname.new(File.expand_path('../vagrant-vcenter', __FILE__))
     autoload :Action, lib_path.join('action')

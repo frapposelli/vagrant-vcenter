@@ -1,8 +1,9 @@
-require "i18n"
+require 'i18n'
 
 module VagrantPlugins
   module VCenter
     module Action
+      # This class sets the state to running if the VM is running.
       class IsRunning
         def initialize(app, env)
           @app = app

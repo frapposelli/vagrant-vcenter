@@ -27,6 +27,8 @@ require 'vagrant/util/which'
 module VagrantPlugins
   module VCenter
     module Action
+      # This class syncs Vagrant folders using RSYNC, this code has been ported
+      # from vagrant-aws (https://github.com/mitchellh/vagrant-aws)
       class SyncFolders
         include Vagrant::Util::ScopedHashOverride
 
