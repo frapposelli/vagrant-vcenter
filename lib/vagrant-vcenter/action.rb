@@ -1,8 +1,9 @@
-require "pathname"
-require "vagrant/action/builder"
+require 'pathname'
+require 'vagrant/action/builder'
 
 module VagrantPlugins
   module VCenter
+    # Actions to be performed by the vagrant-vcenter provider.
     module Action
       include Vagrant::Action::Builtin
 
@@ -21,7 +22,7 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
           b.use Call, IsCreated do |env, b2|
-            if !env[:result]
+            unless env[:result]
               b2.use MessageNotCreated
               next
             end
@@ -59,9 +60,7 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConnectvCenter
           b.use Call, IsPaused do |env, b2|
-            if env[:result]
-              b2.use Resume
-            end
+            b2.use Resume if env[:result]
             b2.use PowerOff
           end
         end
@@ -96,11 +95,9 @@ module VagrantPlugins
               b2.use ConnectvCenter
               b2.use Call, IsRunning do |env2, b3|
               # If the VM is running, must power off
-                if env2[:result]
-                 b3.use action_halt
-                end
+                b3.use action_halt if env2[:result]
                 b3.use Destroy
-              end 
+              end
             else
               b2.use MessageWillNotDestroy
             end
@@ -112,7 +109,7 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
           b.use Call, IsCreated do |env, b2|
-            if !env[:result]
+            unless env[:result]
               b2.use MessageNotCreated
               next
             end
@@ -148,7 +145,7 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
           b.use Call, IsCreated do |env, b2|
-            if !env[:result]
+            unless env[:result]
               b2.use MessageNotCreated
               next
             end
@@ -163,11 +160,10 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
           b.use Call, IsCreated do |env, b2|
-            if !env[:result]
+            unless env[:result]
               b2.use MessageNotCreated
               next
             end
-
             b2.use SSHRun
           end
         end
@@ -177,13 +173,11 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
           b.use Call, IsCreated do |env, b2|
-            if !env[:result]
-              b2.use HandleBoxUrl
-            end
+            b2.use HandleBoxUrl unless env[:result]
           end
           b.use ConnectvCenter
           b.use Call, IsCreated do |env, b2|
-            if !env[:result]
+            unless env[:result]
               b2.use InventoryCheck
               b2.use BuildVM
             end
@@ -194,28 +188,49 @@ module VagrantPlugins
       end
 
       # The autoload farm
-      action_root = Pathname.new(File.expand_path("../action", __FILE__))
-      autoload :AnnounceSSHExec, action_root.join("announce_ssh_exec")
-      autoload :BuildVM, action_root.join("build_vm")
-      autoload :ConnectvCenter, action_root.join("connect_vcenter")
-      autoload :Destroy, action_root.join("destroy")
-      autoload :DisconnectvCenter, action_root.join("disconnect_vcenter")
-      autoload :ForwardPorts, action_root.join("forward_ports")
-      autoload :InventoryCheck, action_root.join("inventory_check")
-      autoload :IsCreated, action_root.join("is_created")
-      autoload :IsPaused, action_root.join("is_paused")
-      autoload :IsRunning, action_root.join("is_running")
-      autoload :MessageAlreadyRunning, action_root.join("message_already_running")
-      autoload :MessageCannotSuspend, action_root.join("message_cannot_suspend")
-      autoload :MessageNotCreated, action_root.join("message_not_created")
-      autoload :MessageWillNotDestroy, action_root.join("message_will_not_destroy")
-      autoload :PowerOff, action_root.join("power_off")
-      autoload :PowerOn, action_root.join("power_on")
-      autoload :ReadSSHInfo, action_root.join("read_ssh_info")
-      autoload :ReadState, action_root.join("read_state")
-      autoload :Resume, action_root.join("resume")
-      autoload :Suspend, action_root.join("suspend")
-      autoload :SyncFolders, action_root.join("sync_folders")
+      action_root = Pathname.new(File.expand_path('../action', __FILE__))
+      autoload :AnnounceSSHExec,
+               action_root.join('announce_ssh_exec')
+      autoload :BuildVM,
+               action_root.join('build_vm')
+      autoload :ConnectvCenter,
+               action_root.join('connect_vcenter')
+      autoload :Destroy,
+               action_root.join('destroy')
+      autoload :DisconnectvCenter,
+               action_root.join('disconnect_vcenter')
+      autoload :ForwardPorts,
+               action_root.join('forward_ports')
+      autoload :InventoryCheck,
+               action_root.join('inventory_check')
+      autoload :IsCreated,
+               action_root.join('is_created')
+      autoload :IsPaused,
+               action_root.join('is_paused')
+      autoload :IsRunning,
+               action_root.join('is_running')
+      autoload :MessageAlreadyRunning,
+               action_root.join('message_already_running')
+      autoload :MessageCannotSuspend,
+               action_root.join('message_cannot_suspend')
+      autoload :MessageNotCreated,
+               action_root.join('message_not_created')
+      autoload :MessageWillNotDestroy,
+               action_root.join('message_will_not_destroy')
+      autoload :PowerOff,
+               action_root.join('power_off')
+      autoload :PowerOn,
+               action_root.join('power_on')
+      autoload :ReadSSHInfo,
+               action_root.join('read_ssh_info')
+      autoload :ReadState,
+               action_root.join('read_state')
+      autoload :Resume,
+               action_root.join('resume')
+      autoload :Suspend,
+               action_root.join('suspend')
+      autoload :SyncFolders,
+               action_root.join('sync_folders')
     end
   end
 end
