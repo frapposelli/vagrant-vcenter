@@ -8,7 +8,7 @@ module VagrantPlugins
 
         def call(env)
           # FIXME: This error should be categorized
-          env[:ui].info(I18n.t("vagrant_vcenter.vm_halted_cannot_suspend"))
+          env[:ui].info(I18n.t('vagrant_vcenter.vm_halted_cannot_suspend'))
           @app.call(env)
         end
       end

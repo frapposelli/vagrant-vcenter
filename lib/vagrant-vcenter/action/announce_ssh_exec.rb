@@ -7,8 +7,10 @@ module VagrantPlugins
         end
 
         def call(env)
-          sshInfo = env[:machine].ssh_info
-          env[:ui].success("External IP for #{env[:machine].name}: #{sshInfo[:host]}")
+          ssh_info = env[:machine].ssh_info
+          env[:ui].success(
+            "External IP for #{env[:machine].name}: #{ssh_info[:host]}"
+          )
           super
         end
       end

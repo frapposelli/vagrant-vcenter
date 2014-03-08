@@ -1,5 +1,5 @@
-require "log4r"
-require "vagrant"
+require 'log4r'
+require 'vagrant'
 
 module VagrantPlugins
   module VCenter
@@ -15,17 +15,17 @@ module VagrantPlugins
       end
 
       def ssh_info
-        env = @machine.action("read_ssh_info")
+        env = @machine.action('read_ssh_info')
         env[:machine_ssh_info]
       end
 
       def state
-        env = @machine.action("read_state")
+        env = @machine.action('read_state')
 
         state_id = env[:machine_state_id]
 
         # Translate into short/long descriptions
-        short = state_id.to_s.gsub("_", " ")
+        short = state_id.to_s.gsub('_', ' ')
         long  = I18n.t("vagrant_vcenter.states.#{state_id}")
 
         # Return the MachineState object
@@ -33,7 +33,7 @@ module VagrantPlugins
       end
 
       def to_s
-        id = @machine.id.nil? ? "new" : @machine.id
+        id = @machine.id.nil? ? 'new' : @machine.id
         "vCenter (#{id})"
       end
     end

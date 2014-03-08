@@ -8,7 +8,7 @@ module VagrantPlugins
 
         def call(env)
           # FIXME: this error should be categorized
-          env[:ui].info(I18n.t("vCenter.vm_not_created"))
+          env[:ui].info(I18n.t('vcenter.vm_not_created'))
           @app.call(env)
         end
       end

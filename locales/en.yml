@@ -1,5 +1,5 @@
-en: 
-  vagrant_vcenter: 
+en:
+  vagrant_vcenter:
     vm_not_created: "The VM has not been created"
     will_not_destroy: "VM will not be destroyed"
     vm_already_running: "VM is already running"
@@ -9,25 +9,25 @@ en:
       Make sure rsync is installed and the binary can be found in the PATH.
     rsync_folder: |-
       Rsyncing folder: %{hostpath} => %{guestpath}
-    config: 
+    config:
       api_version: "Configuration must specify a vCenter API version (default=5.1)"
-      catalog_name: "Configuration must specify a vCenter  Catalog (for the VM templates images)"
+      catalog_name: "Configuration must specify a vCenter Catalog (for the VM templates images)"
       ip_dns: "DNS configuration must be specified as an Array type"
       compute_resource: "Configuration must specify a compute resource name"
-      hostname: "Configuration must specify a vCenter  hostname"
+      hostname: "Configuration must specify a vCenter hostname"
       name: "Configuration must specify a VM name"
-      orgname: "Configuration must specify a vCenter  organization"
-      password: "Configuration must specify a vCenter  password"
+      orgname: "Configuration must specify a vCenter organization"
+      password: "Configuration must specify a vCenter password"
       resource_pool: "Configuration must specify a resource pool name"
       template: "Configuration must specify a template name"
-      username: "Configuration must specify a vCenter  username"
-      vdc_name: "Configuration must specify a vCenter  Virtual Datacenter (Target Organization VDC)"
-    errors: 
+      username: "Configuration must specify a vCenter username"
+      vdc_name: "Configuration must specify a vCenter Virtual Datacenter (Target Organization VDC)"
+    errors:
       missing_compute_resource: "Configured compute resource not found"
       missing_datacenter: "Configured data center not found"
       missing_resource_pool: "Configured resource pool not found"
       missing_template: "Configured template VM could not be found"
-      vCenter_old_version: "Sorry, VMware vCenter  API version %{version} is not supported"
+      vCenter_old_version: "Sorry, VMware vCenter API version %{version} is not supported"
       host_not_found: "VMware vCenter Endpoint not found: %{message}"
       host_redirect: "VMware vCenter Endpoint not found, received an HTTP 302 message back, are you sure you're using the right protocol? (https)"
       unauthorized_access: "Access not authorized, please verify the username and password in your Vagrantfile"
@@ -36,8 +36,8 @@ en:
       stop_vapp_error: "Impossible to stop vApp, could be a transient error, please try again, error: %{message}"
       compose_vapp_error: "Impossible to compose a vApp, error: %{message}"
       forward_port_collision: "Port collision detected, change it in the Vagrantfile or add auto_correct: true. %{guest_port} => %{host_port}"
-      rest_errors: 
-        object_not_found: "Object not found in vCenter "
+      rest_errors:
+        object_not_found: "Object not found in vCenter"
         invalid_config_error: "Invalid Guest Customization Specified"
         invalid_state_error: "Invalid vApp State %{message}"
       subnet_errors:
@@ -57,7 +57,7 @@ en:
         Host path: %{hostpath}
         Error: %{err}
 
-    states: 
+    states:
       not_created: |-
         The environment has not yet been created. Run `vagrant up` to
         create the environment. If a machine is not created, only the

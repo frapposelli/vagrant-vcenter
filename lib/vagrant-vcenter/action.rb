@@ -1,5 +1,5 @@
-require "pathname"
-require "vagrant/action/builder"
+require 'pathname'
+require 'vagrant/action/builder'
 
 module VagrantPlugins
   module VCenter
@@ -100,7 +100,7 @@ module VagrantPlugins
                  b3.use action_halt
                 end
                 b3.use Destroy
-              end 
+              end
             else
               b2.use MessageWillNotDestroy
             end
@@ -194,28 +194,30 @@ module VagrantPlugins
       end
 
       # The autoload farm
-      action_root = Pathname.new(File.expand_path("../action", __FILE__))
-      autoload :AnnounceSSHExec, action_root.join("announce_ssh_exec")
-      autoload :BuildVM, action_root.join("build_vm")
-      autoload :ConnectvCenter, action_root.join("connect_vcenter")
-      autoload :Destroy, action_root.join("destroy")
-      autoload :DisconnectvCenter, action_root.join("disconnect_vcenter")
-      autoload :ForwardPorts, action_root.join("forward_ports")
-      autoload :InventoryCheck, action_root.join("inventory_check")
-      autoload :IsCreated, action_root.join("is_created")
-      autoload :IsPaused, action_root.join("is_paused")
-      autoload :IsRunning, action_root.join("is_running")
-      autoload :MessageAlreadyRunning, action_root.join("message_already_running")
-      autoload :MessageCannotSuspend, action_root.join("message_cannot_suspend")
-      autoload :MessageNotCreated, action_root.join("message_not_created")
-      autoload :MessageWillNotDestroy, action_root.join("message_will_not_destroy")
-      autoload :PowerOff, action_root.join("power_off")
-      autoload :PowerOn, action_root.join("power_on")
-      autoload :ReadSSHInfo, action_root.join("read_ssh_info")
-      autoload :ReadState, action_root.join("read_state")
-      autoload :Resume, action_root.join("resume")
-      autoload :Suspend, action_root.join("suspend")
-      autoload :SyncFolders, action_root.join("sync_folders")
+      action_root = Pathname.new(File.expand_path('../action', __FILE__))
+      autoload :AnnounceSSHExec, action_root.join('announce_ssh_exec')
+      autoload :BuildVM, action_root.join('build_vm')
+      autoload :ConnectvCenter, action_root.join('connect_vcenter')
+      autoload :Destroy, action_root.join('destroy')
+      autoload :DisconnectvCenter, action_root.join('disconnect_vcenter')
+      autoload :ForwardPorts, action_root.join('forward_ports')
+      autoload :InventoryCheck, action_root.join('inventory_check')
+      autoload :IsCreated, action_root.join('is_created')
+      autoload :IsPaused, action_root.join('is_paused')
+      autoload :IsRunning, action_root.join('is_running')
+      autoload :MessageAlreadyRunning,
+               action_root.join('message_already_running')
+      autoload :MessageCannotSuspend, action_root.join('message_cannot_suspend')
+      autoload :MessageNotCreated, action_root.join('message_not_created')
+      autoload :MessageWillNotDestroy,
+               action_root.join('message_will_not_destroy')
+      autoload :PowerOff, action_root.join('power_off')
+      autoload :PowerOn, action_root.join('power_on')
+      autoload :ReadSSHInfo, action_root.join('read_ssh_info')
+      autoload :ReadState, action_root.join('read_state')
+      autoload :Resume, action_root.join('resume')
+      autoload :Suspend, action_root.join('suspend')
+      autoload :SyncFolders, action_root.join('sync_folders')
     end
   end
 end

@@ -1,10 +1,10 @@
-require "vagrant"
+require 'vagrant'
 
 module VagrantPlugins
   module VCenter
     module Errors
       class VCenterError < Vagrant::Errors::VagrantError
-        error_namespace("vagrant_vcenter.errors")
+        error_namespace('vagrant_vcenter.errors')
       end
       class RsyncError < VCenterError
         error_key(:rsync_error)
@@ -41,7 +41,7 @@ module VagrantPlugins
         error_key(:forward_port_collision)
       end
       class SubnetErrors < VCenterError
-        error_namespace("vagrant_Vcenter.errors.subnet_errors")
+        error_namespace('vagrant_vcenter.errors.subnet_errors')
       end
       class InvalidSubnet < SubnetErrors
         error_key(:invalid_subnet)
@@ -50,7 +50,7 @@ module VagrantPlugins
         error_key(:subnet_too_small)
       end
       class RestError < VCenterError
-        error_namespace("vagrant_Vcenter.errors.rest_errors")
+        error_namespace('vagrant_vcenter.errors.rest_errors')
       end
       class ObjectNotFound < RestError
         error_key(:object_not_found)

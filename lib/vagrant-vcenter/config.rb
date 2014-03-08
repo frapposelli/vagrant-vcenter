@@ -1,9 +1,8 @@
-require "vagrant"
+require 'vagrant'
 
 module VagrantPlugins
   module VCenter
     class Config < Vagrant.plugin('2', :config)
-
       # login attributes
 
       # The vCenter  hostname
@@ -58,29 +57,39 @@ module VagrantPlugins
       # @return [Bool]
       attr_accessor :linked_clones
 
- 
       ##
       ## vCenter  config runtime values
-      ## 
+      ##
 
       # connection handle
       attr_accessor :vcenter_cnx
       attr_accessor :template_id
-      
 
       def validate(machine)
         errors = _detected_errors
 
         # TODO: add blank?
-        errors << I18n.t("vagrant_vcenter.config.hostname") if hostname.nil?
-        errors << I18n.t("vagrant_vcenter.config.username") if username.nil?
-        errors << I18n.t("vagrant_vcenter.config.password") if password.nil?
-        errors << I18n.t("vagrant_vcenter.config.datastore_name") if datastore_name.nil?
-        errors << I18n.t("vagrant_vcenter.config.datacenter_name") if datacenter_name.nil?
-        errors << I18n.t("vagrant_vcenter.config.computer_name") if computer_name.nil?
-        errors << I18n.t("vagrant_vcenter.config.network_name") if network_name.nil?
+        errors << I18n.t('vagrant_vcenter.config.hostname') if hostname.nil?
+        errors << I18n.t('vagrant_vcenter.config.username') if username.nil?
+        errors << I18n.t('vagrant_vcenter.config.password') if password.nil?
 
-        { "vCenter Provider" => errors }
+        if datastore_name.nil?
+          errors << I18n.t('vagrant_vcenter.config.datastore_name')
+        end
+
+        if datacenter_name.nil?
+          errors << I18n.t('vagrant_vcenter.config.datacenter_name')
+        end
+
+        if computer_name.nil?
+          errors << I18n.t('vagrant_vcenter.config.computer_name')
+        end
+
+        if network_name.nil?
+          errors << I18n.t('vagrant_vcenter.config.network_name')
+        end
+
+        { 'vCenter Provider' => errors }
       end
     end
   end
