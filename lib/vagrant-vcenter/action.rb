@@ -149,8 +149,6 @@ module VagrantPlugins
               b2.use MessageNotCreated
               next
             end
-            # This calls our helper that announces the IP used to connect
-            # to the VM, either directly to the vApp vShield or to the Org Edge.
             b2.use AnnounceSSHExec
           end
         end
@@ -173,14 +171,12 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
           b.use Call, IsCreated do |env, b2|
-            b2.use HandleBoxUrl unless env[:result]
+            b2.use HandleBox unless env[:result]
           end
           b.use ConnectvCenter
+          b.use InventoryCheck
           b.use Call, IsCreated do |env, b2|
-            unless env[:result]
-              b2.use InventoryCheck
-              b2.use BuildVM
-            end
+            b2.use BuildVM unless env[:result]
           end
           b.use action_start
           b.use DisconnectvCenter

@@ -70,10 +70,16 @@ module VagrantPlugins
             vm_folder,
             datastore
           )
+
+          deployer_opts = {
+            :run_without_interruptions => true,
+            :simple_vm_name => true
+          }
+
           deployer.upload_ovf_as_template(
                                           box_ovf,
                                           template_name,
-                                          :run_without_interruptions => true)
+                                          deployer_opts)
           # FIXME: Progressbar??
         end
 

@@ -12,9 +12,10 @@ Gem::Specification.new do |s|
   s.summary = 'VMware vCenter® Vagrant provider'
   s.description = 'Enables Vagrant to manage machines with VMware vCenter®.'
 
-  s.add_runtime_dependency 'rbvmomi', '~> 1.8.1'
+  s.add_runtime_dependency 'vagrant-rbvmomi', '~> 1.8.1'
   s.add_runtime_dependency 'log4r', '~> 1.1.10'
   s.add_runtime_dependency 'nokogiri', '1.5.5'
+  s.add_runtime_dependency 'pry'
 
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec-core', '~> 2.12.2'
