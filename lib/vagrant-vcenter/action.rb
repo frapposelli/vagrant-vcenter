@@ -179,7 +179,6 @@ module VagrantPlugins
             b2.use BuildVM unless env[:result]
           end
           b.use action_start
-          b.use DisconnectvCenter
         end
       end
 

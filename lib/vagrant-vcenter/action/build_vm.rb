@@ -105,6 +105,8 @@ module VagrantPlugins
           end
           @logger.debug("folder for VM: #{vm_folder}")
 
+          env[:ui].info('Creating VM...')
+
           template.CloneVM_Task(
                                 :folder => vm_folder,
                                 :name => vm_target,
