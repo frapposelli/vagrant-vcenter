@@ -1,0 +1,50 @@
+en: 
+  vagrant_vcenter:
+    power:
+      vm_not_created: |-
+        The VM has not been created
+      will_not_destroy: |-
+        VM will not be destroyed
+      vm_already_running: |-
+        VM is already running
+      vm_halted_cannot_suspend: |-
+        VM is not running or already suspended, cannot suspend it.
+    sync:
+      rsync_not_found_warning: |-
+        Warning! Folder sync disabled because the rsync binary is missing.
+        Make sure rsync is installed and the binary can be found in the PATH.
+      rsync_folder: |-
+        Rsyncing folder: %{hostpath} => %{guestpath}
+    config: 
+      hostname: |-
+        Configuration must specify a vCenter hostname
+      username: |-
+        Configuration must specify a vCenter username
+      password: |-
+        Configuration must specify a vCenter password
+      datastore_name: |-
+        Configuration must specify a Datastore (for the VM templates images)
+      datacenter_name: |-
+        Configuration must specify a vCenter Datacenter
+      computer_name: |-
+        Configuration must specify a compute resource name
+      network_name: |-
+        Configuration must specify a resource pool name
+      resourcepool_name: |-
+        Configuration must specify a resource pool name
+    states: 
+      not_created: |-
+        The environment has not yet been created. Run `vagrant up` to
+        create the environment. If a machine is not created, only the
+        default provider will be shown. So if a provider is not listed,
+        then the machine is not created for that environment.
+      suspended: |-
+        The VM is paused. To resume the VM, simply run `vagrant up`
+        or `vagrant resume`
+      stopped: |-
+        The VM is powered off. To restart the VM, simply run `vagrant up`
+      running: |-
+        The VM is running. To stop this VM, you can run `vagrant halt` to
+        shut it down forcefully, or you can run `vagrant suspend` to simply
+        suspend the virtual machine. In either case, to restart it again,
+        simply run `vagrant up`.

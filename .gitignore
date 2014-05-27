@@ -1,0 +1,9 @@
+.vagrant/*
+pkg/*
+Gemfile.lock
+test-*
+.yardoc/*
+doc/*
+Vagrantfile
+puppet/*
+*.gem
