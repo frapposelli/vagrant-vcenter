@@ -1,12 +1,17 @@
 [Vagrant](http://www.vagrantup.com) provider for VMware vCenter®
 =============
 
-[Version 0.1.0](../../releases/tag/v0.1.0) has been released!
+[Version 0.1.1](../../releases/tag/v0.1.1) has been released!
 -------------
 
 Please note that this software is still Alpha/Beta quality and is not recommended for production usage.
 
 Right now a [Precise32](http://vagrant.gosddc.com/boxes/precise32-vcenter.box) is available for use, or you can roll your own as you please, make sure to install VMware tools in it.
+
+Changes in [version 0.1.1](../../releases/tag/v0.1.1) include:
+
+- Support for ```vagrant share``` [Fixes [#2](../../issues/2)]
+- Support for [Vagrant Cloud](http://vagrantcloud.com) boxes [Fixes [#1](../../issues/1)]
 
 Install
 -------------
@@ -16,6 +21,12 @@ Latest version can be easily installed by running the following command:
 ```vagrant plugin install vagrant-vcenter```
 
 Vagrant will download all the required gems during the installation process.
+
+If you already have the plugin installed you can use:
+
+```vagrant plugin upgrade vagrant-vcenter```
+
+To perform an upgrade to the latest version.
 
 After the install has completed a ```vagrant up --provider=vcenter``` will trigger the newly installed provider.
 
