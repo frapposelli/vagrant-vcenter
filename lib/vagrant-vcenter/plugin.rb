@@ -12,7 +12,7 @@ module VagrantPlugins
   module VCenter
     # Initialize Vagrant Plugin
     class Plugin < Vagrant.plugin('2')
-      name 'vCenter'
+      name 'VMware vCenter Provider'
       description 'Allows Vagrant to manage machines with VMware vCenter (R)'
 
       config(:vcenter, :provider) do
@@ -27,6 +27,12 @@ module VagrantPlugins
         # Return the provider
         require_relative 'provider'
         Provider
+      end
+
+      # Add vagrant share support
+      provider_capability('vcenter', 'public_address') do
+        require_relative 'cap/public_address'
+        Cap::PublicAddress
       end
 
       def self.setup_i18n
