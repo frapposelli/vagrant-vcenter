@@ -26,7 +26,14 @@ module VagrantPlugins
           config = env[:machine].provider_config
 
           box_dir = env[:machine].box.directory.to_s
-          box_file = env[:machine].box.name.to_s
+
+          if env[:machine].box.name.to_s.include? '/'
+            box_file = env[:machine].box.name.rpartition('/').last.to_s
+            box_name = env[:machine].box.name.to_s.gsub(/\//, '-')
+          else
+            box_file = env[:machine].box.name.to_s
+            box_name = box_file
+          end
 
           box_ovf = "file://#{box_dir}/#{box_file}.ovf"
 
@@ -35,7 +42,7 @@ module VagrantPlugins
 
           @logger.debug("OVF File: #{box_ovf}")
 
-          env[:ui].info("Adding [#{env[:machine].box.name.to_s}]")
+          env[:ui].info("Adding [#{box_name}]")
 
           # FIXME: Raise a correct exception
           dc = config.vcenter_cnx.serviceInstance.find_datacenter(
@@ -51,7 +58,7 @@ module VagrantPlugins
                             config.template_folder_name,
                             RbVmomi::VIM::Folder)
 
-          template_name = box_file
+          template_name = box_name
 
           # FIXME: Raise a correct exception
           datastore = dc.find_datastore(
@@ -91,11 +98,19 @@ module VagrantPlugins
           dc = config.vcenter_cnx.serviceInstance.find_datacenter(
                config.datacenter_name) or fail 'datacenter not found'
 
+          if env[:machine].box.name.to_s.include? '/'
+            box_file = env[:machine].box.name.rpartition('/').last.to_s
+            box_name = env[:machine].box.name.to_s.gsub(/\//, '-')
+          else
+            box_file = env[:machine].box.name.to_s
+            box_name = box_file
+          end
+
           if config.template_folder_name.nil?
-            box_to_search = env[:machine].box.name.to_s
+            box_to_search = box_name
           else
             box_to_search = config.template_folder_name +
-                            '/' + env[:machine].box.name.to_s
+                            '/' + box_name
           end
 
           @logger.debug("This is the box we're looking for: #{box_to_search}")
@@ -103,16 +118,16 @@ module VagrantPlugins
           config.template_id = dc.find_vm(box_to_search)
 
           if config.template_id.nil?
-            env[:ui].warn("Template [#{env[:machine].box.name.to_s}] " +
+            env[:ui].warn("Template [#{box_name}] " +
                           'does not exist!')
 
             user_input = env[:ui].ask(
-              "Would you like to upload the [#{env[:machine].box.name.to_s}]" +
+              "Would you like to upload the [#{box_name}]" +
               " box?\nChoice (yes/no): "
             )
 
             if user_input.downcase == 'yes' || user_input.downcase == 'y'
-              env[:ui].info("Uploading [#{env[:machine].box.name.to_s}]...")
+              env[:ui].info("Uploading [#{box_name}]...")
               vcenter_upload_box(env)
             else
               env[:ui].error('Template not uploaded, exiting...')

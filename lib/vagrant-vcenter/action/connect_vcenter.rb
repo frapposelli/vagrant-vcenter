@@ -20,7 +20,7 @@ module VagrantPlugins
 
             @logger.debug("config.hostname: #{config.hostname}")
             @logger.debug("config.username: #{config.username}")
-            @logger.debug("config.password: #{config.password}")
+            @logger.debug('config.password: <hidden>')
 
             # FIXME: fix the insecure flag, catch the exception
             config.vcenter_cnx = RbVmomi::VIM.connect(

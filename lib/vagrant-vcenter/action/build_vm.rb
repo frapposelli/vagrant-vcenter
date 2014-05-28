@@ -22,11 +22,19 @@ module VagrantPlugins
           dc = config.vcenter_cnx.serviceInstance.find_datacenter(
             config.datacenter_name) or abort 'datacenter not found'
 
+          if env[:machine].box.name.to_s.include? '/'
+            box_file = env[:machine].box.name.rpartition('/').last.to_s
+            box_name = env[:machine].box.name.to_s.gsub(/\//, '-')
+          else
+            box_file = env[:machine].box.name.to_s
+            box_name = box_file
+          end
+
           if config.template_folder_name.nil?
-            box_to_search = env[:machine].box.name.to_s
+            box_to_search = box_name
           else
             box_to_search = config.template_folder_name + '/' +
-                            env[:machine].box.name.to_s
+                            box_name
           end
 
           # FIXME: Raise a correct exception
