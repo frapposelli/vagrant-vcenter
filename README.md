@@ -36,7 +36,7 @@ Configuration
 Here's a sample Multi-VM Vagrantfile:
 
 ```ruby
-precise32_box_url = 'http://vagrant.tsugliani.fr/precise32-vcenter.box'
+precise32_box_url = 'http://vagrant.gosddc.com/boxes/precise32-vcenter.box'
 
 nodes = [
   { hostname: 'web-vm',
