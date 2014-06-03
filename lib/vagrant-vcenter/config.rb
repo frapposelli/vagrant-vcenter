@@ -58,6 +58,11 @@ module VagrantPlugins
       # @return [Bool]
       attr_accessor :linked_clones
 
+      # Disable automatic safe vm name generation
+      #
+      # @return [Bool]
+      attr_accessor :disable_auto_vm_name
+
       ##
       ## vCenter  config runtime values
       ##
