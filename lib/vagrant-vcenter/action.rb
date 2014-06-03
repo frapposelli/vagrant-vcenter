@@ -170,10 +170,10 @@ module VagrantPlugins
       def self.action_up
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
+          b.use ConnectvCenter
           b.use Call, IsCreated do |env, b2|
             b2.use HandleBox unless env[:result]
           end
-          b.use ConnectvCenter
           b.use InventoryCheck
           b.use Call, IsCreated do |env, b2|
             b2.use BuildVM unless env[:result]
