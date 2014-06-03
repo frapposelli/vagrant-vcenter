@@ -96,9 +96,15 @@ module VagrantPlugins
 
           @logger.debug("Spec: #{spec.pretty_inspect}")
 
-          vm_target = "Vagrant-#{Etc.getlogin}-" +
-                      "#{vm_name}-#{Socket.gethostname.downcase}-" +
-                      "#{SecureRandom.hex(4)}"
+          @logger.debug("disable_auto_vm_name: #{config.disable_auto_vm_name}")
+
+          if config.disable_auto_vm_name or config.disable_auto_vm_name == 'true'
+            vm_target = vm_name.to_s
+          else
+            vm_target = "Vagrant-#{Etc.getlogin}-" +
+                        "#{vm_name}-#{Socket.gethostname.downcase}-" +
+                        "#{SecureRandom.hex(4)}"
+          end
 
           @logger.debug("VM name: #{vm_target}")
 
