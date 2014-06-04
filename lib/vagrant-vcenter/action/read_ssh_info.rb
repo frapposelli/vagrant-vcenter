@@ -27,9 +27,19 @@ module VagrantPlugins
           root_vm_folder = dc.vmFolder
           vm = root_vm_folder.findByUuid(env[:machine].id)
 
-          @logger.debug("IP Address: #{vm.guest.ipAddress}")
+          address = vm.guest.ipAddress
+          if not address or address == ''
+            address = vm.guest_ip
+          end
 
-          { :host => vm.guest.ipAddress, :port => 22 }
+          if not address or address == ''
+            # if we can't find it right away just return nil.  it will retry
+            # till the vmware tools supplies the ip address back to vcenter
+            @logger.debug('could not find booted guest ipaddress')
+            return nil
+          end
+
+          { :host => address, :port => 22 }
         end
       end
     end
