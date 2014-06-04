@@ -32,6 +32,14 @@ en:
         Configuration must specify a resource pool name
       resourcepool_name: |-
         Configuration must specify a resource pool name
+      no_prep_type: |-
+        The only supported prep type is linux.  hack away.
+      ipaddress: |-
+        Configuration must specify a ipaddress
+      gateway: |-
+        Configuration must specify a gateway
+      netmask: |-
+        Configuration must specify a netmask
     states: 
       not_created: |-
         The environment has not yet been created. Run `vagrant up` to

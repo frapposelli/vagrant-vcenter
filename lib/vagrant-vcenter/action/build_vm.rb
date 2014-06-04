@@ -94,6 +94,37 @@ module VagrantPlugins
                  :powerOn => false,
                  :template => false)
 
+          if config.enable_vm_customization or config.enable_vm_customization == 'true'
+            gIPSettings = RbVmomi::VIM.CustomizationGlobalIPSettings
+            if not config.dns_server_list.empty?
+              gIPSettings[ :dnsServerList ] = config.dns_server_list
+            end
+            if not config.dns_suffix_list.empty?
+              gIPSettings[ :dnsSuffixList ] = config.dns_suffix_list
+            end
+
+            prep = RbVmomi::VIM.CustomizationLinuxPrep(
+                   :domain => env[:machine].name,
+                   :hostName => RbVmomi::VIM.CustomizationFixedName(
+                               :name => env[:machine].name))
+            
+            adapter = RbVmomi::VIM.CustomizationIPSettings(
+                      :gateway => [config.gateway],
+                      :ip => RbVmomi::VIM.CustomizationFixedIp(
+                            :ipAddress => config.ipaddress),
+                      :subnetMask => config.netmask)
+            
+            nic_map = [RbVmomi::VIM.CustomizationAdapterMapping(
+                       :adapter => adapter)]
+
+            cust_spec = RbVmomi::VIM.CustomizationSpec(
+                        :globalIPSettings => gIPSettings,
+                        :identity => prep,
+                        :nicSettingMap => nic_map)
+ 
+            spec.customization = cust_spec
+          end
+
           @logger.debug("Spec: #{spec.pretty_inspect}")
 
           @logger.debug("disable_auto_vm_name: #{config.disable_auto_vm_name}")
