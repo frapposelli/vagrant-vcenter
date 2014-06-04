@@ -95,13 +95,9 @@ module VagrantPlugins
                  :template => false)
 
           if config.enable_vm_customization or config.enable_vm_customization == 'true'
-            gIPSettings = RbVmomi::VIM.CustomizationGlobalIPSettings
-            if not config.dns_server_list.empty?
-              gIPSettings[ :dnsServerList ] = config.dns_server_list
-            end
-            if not config.dns_suffix_list.empty?
-              gIPSettings[ :dnsSuffixList ] = config.dns_suffix_list
-            end
+            gIPSettings = RbVmomi::VIM.CustomizationGlobalIPSettings(
+                          :dnsServerList => config.dns_server_list,
+                          :dnsSuffixList => config.dns_suffix_list)
 
             prep = RbVmomi::VIM.CustomizationLinuxPrep(
                    :domain => env[:machine].name,
