@@ -102,6 +102,28 @@ module VagrantPlugins
       # @return [String]
       attr_accessor :ipaddress
 
+      # vm network name
+      #
+      # @return [String]
+      attr_accessor :vm_network_name
+
+      # vm network type
+      # only supported network type
+      # DistributedVirtualSwitchPort
+      #
+      # @return [String]
+      attr_accessor :vm_network_type
+
+      # num cpu
+      #
+      # @return [Fixnum]
+      attr_accessor :num_cpu
+
+      # memory in MB
+      #
+      # @return [Fixnum]
+      attr_accessor :memory
+
 
 
       ##

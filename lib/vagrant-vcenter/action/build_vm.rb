@@ -93,6 +93,34 @@ module VagrantPlugins
                  :location => relocate_spec,
                  :powerOn => false,
                  :template => false)
+          
+          if config.vm_network_name or config.num_cpu or config.memory
+            config_spec = RbVmomi::VIM.VirtualMachineConfigSpec
+            config_spec.numCPUs = config.num_cpu if config.num_cpu
+            config_spec.memoryMB = config.memory if config.memory
+          
+            if config.vm_network_name
+              # First we must find the specified network
+              network = dc.network.find { |f| f.name == config.vm_network_name } or
+                  abort "Could not find network with name #{config.vm_network_name} to join vm to" 
+              card = template.config.hardware.device.grep(
+                         RbVmomi::VIM::VirtualEthernetCard).first or 
+                         abort "could not find network card to customize"
+              if config.vm_network_type == "DistributedVirtualSwitchPort"
+                switch_port = RbVmomi::VIM.DistributedVirtualSwitchPortConnection(
+                              :switchUuid => network.config.distributedVirtualSwitch.uuid,
+                              :portgroupKey => network.key)
+                card.backing = RbVmomi::VIM.VirtualEthernetCardDistributedVirtualPortBackingInfo(
+                               :port => switch_port)
+              else
+                abort "vm network type of #{config.vm_network_type} is unknown"
+              end 
+              dev_spec = RbVmomi::VIM.VirtualDeviceConfigSpec(:device => card, :operation => "edit")
+              config_spec.deviceChange = [dev_spec]
+            end
+            
+            spec.config = config_spec
+          end
 
           if config.enable_vm_customization or config.enable_vm_customization == 'true'
             gIPSettings = RbVmomi::VIM.CustomizationGlobalIPSettings(
