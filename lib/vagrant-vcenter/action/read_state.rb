@@ -18,12 +18,6 @@ module VagrantPlugins
         def read_state(env)
           # FIXME: this part needs some cleanup
           config = env[:machine].provider_config
-          vm_name = env[:machine].name
-
-          if env[:machine].id.nil?
-            @logger.info("VM [#{vm_name}] is not created yet")
-            return :not_created
-          end
 
           # FIXME: Raise a correct exception
           dc = config.vcenter_cnx.serviceInstance.find_datacenter(
@@ -32,12 +26,14 @@ module VagrantPlugins
           root_vm_folder = dc.vmFolder
 
           vm = root_vm_folder.findByUuid(env[:machine].id)
-          if not vm
+
+          @logger.debug("Current power state: #{vm.runtime.powerState}")
+          vm_name = env[:machine].name
+
+          if env[:machine].id.nil?
             @logger.info("VM [#{vm_name}] is not created yet")
             return :not_created
           end
-
-          @logger.debug("Current power state: #{vm.runtime.powerState}")
 
           if vm.runtime.powerState == 'poweredOff'
             @logger.info("VM [#{vm_name}] is stopped")
