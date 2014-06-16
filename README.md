@@ -1,12 +1,29 @@
 [Vagrant](http://www.vagrantup.com) provider for VMware vCenter®
 =============
 
-[Version 0.1.1](../../releases/tag/v0.1.1) has been released!
+[Version 0.2.0](../../releases/tag/v0.2.0) has been released!
 -------------
 
 Please note that this software is still Alpha/Beta quality and is not recommended for production usage.
 
 Right now a [Precise32](http://vagrant.gosddc.com/boxes/precise32-vcenter.box) is available for use, or you can roll your own as you please, make sure to install VMware tools in it.
+
+Changes in [version 0.2.0](../../releases/tag/v0.2.0) include:
+
+New Features
+
+- Add option to set the actual vm name
+- Set some options in the vm via linux prep
+- Static networking
+- Hostname
+- Add option to set vmnetwork name and backing
+- Vagrant now uses builtin ```SyncedFolders``` helper to synchronize folders
+
+Fixes
+
+- Fix the read_ssh_info if the vm doesn't have a network yet at first try the later ssh's wont forever fail
+
+Many thanks to @BarnacleBob for submitting PR #4 with all these new features!
 
 Changes in [version 0.1.1](../../releases/tag/v0.1.1) include:
 

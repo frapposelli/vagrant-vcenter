@@ -58,6 +58,74 @@ module VagrantPlugins
       # @return [Bool]
       attr_accessor :linked_clones
 
+      # Disable automatic safe vm name generation
+      #
+      # @return [Bool]
+      attr_accessor :disable_auto_vm_name
+
+      # Use prep and customization api in the building
+      # of the vm in vcenter
+      #
+      # Mostly this allows the static ip configuration
+      # of a vm
+      #
+      # @return [Bool]
+      attr_accessor :enable_vm_customization
+
+      # Type of the machine prep to use
+      #
+      # @return [String]
+      attr_accessor :prep_type
+
+      # Dns server list
+      #
+      # @return [Array<String>]
+      attr_accessor :dns_server_list
+
+      # Dns suffix list
+      #
+      # @return [Array<String>]
+      attr_accessor :dns_suffix_list
+
+      # network gateway
+      #
+      # @return [String]
+      attr_accessor :gateway
+
+      # subnet mask
+      #
+      # @return [String]
+      attr_accessor :netmask
+
+      # ip address
+      #
+      # @return [String]
+      attr_accessor :ipaddress
+
+      # vm network name
+      #
+      # @return [String]
+      attr_accessor :vm_network_name
+
+      # vm network type
+      # only supported network type
+      # DistributedVirtualSwitchPort
+      #
+      # @return [String]
+      attr_accessor :vm_network_type
+
+      # num cpu
+      #
+      # @return [Fixnum]
+      attr_accessor :num_cpu
+
+      # memory in MB
+      #
+      # @return [Fixnum]
+      attr_accessor :memory
+
+
+
       ##
       ## vCenter  config runtime values
       ##
@@ -65,6 +133,14 @@ module VagrantPlugins
       # connection handle
       attr_accessor :vcenter_cnx
       attr_accessor :template_id
+
+      def initialize()
+        @enable_vm_customization = false
+        @prep_type = 'linux'
+        @enable_vm_customization = false
+        @dns_server_list = []
+        @dns_suffix_list = []
+      end
 
       def validate(machine)
         errors = _detected_errors
@@ -84,6 +160,17 @@ module VagrantPlugins
         I18n.t('vagrant_vcenter.config.computer_name') if computer_name.nil?
         errors <<
         I18n.t('vagrant_vcenter.config.network_name') if network_name.nil?
+
+        if enable_vm_customization
+          errors <<
+          I18n.t('vagrant_vcenter.config.no_prep_type') if prep_type != 'linux'
+          errors <<
+          I18n.t('vagrant_vcenter.config.gateway') if gateway.empty?
+          errors <<
+          I18n.t('vagrant_vcenter.config.ipaddress') if ipaddress.empty?
+          errors <<
+          I18n.t('vagrant_vcenter.config.netmask') if netmask.empty?
+        end
 
         { 'vCenter Provider' => errors }
       end
