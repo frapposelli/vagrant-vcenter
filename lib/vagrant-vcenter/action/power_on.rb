@@ -21,7 +21,7 @@ module VagrantPlugins
           # Poweron VM
           env[:ui].info('Powering on VM...')
           vm.PowerOnVM_Task.wait_for_completion
-          sleep(3) until env[:machine].communicate.ready?
+          sleep(20) until env[:machine].communicate.ready?
           @app.call env
         end
       end
