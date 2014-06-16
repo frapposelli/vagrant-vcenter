@@ -14,7 +14,7 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |b|
           b.use PowerOn
           b.use Provision
-          b.use SyncFolders
+          b.use SyncedFolders
         end
       end
 
@@ -114,7 +114,7 @@ module VagrantPlugins
               next
             end
             b2.use Provision
-            b2.use SyncFolders
+            b2.use SyncedFolders
           end
         end
       end
@@ -224,8 +224,6 @@ module VagrantPlugins
                action_root.join('resume')
       autoload :Suspend,
                action_root.join('suspend')
-      autoload :SyncFolders,
-               action_root.join('sync_folders')
     end
   end
 end
