@@ -23,7 +23,7 @@ Fixes
 
 - Fix the read_ssh_info if the vm doesn't have a network yet at first try the later ssh's wont forever fail
 
-Many thanks to @BarnacleBob for submitting PR #4 with all these new features!
+Many thanks to [Karl Pietri](https://github.com/BarnacleBob) for submitting PR [#4](https://github.com/gosddc/vagrant-vcenter/pull/4) with all these new features!
 
 Changes in [version 0.1.1](../../releases/tag/v0.1.1) include:
 
