@@ -128,9 +128,9 @@ module VagrantPlugins
                           :dnsSuffixList => config.dns_suffix_list)
 
             prep = RbVmomi::VIM.CustomizationLinuxPrep(
-                   :domain => env[:machine].name,
+                   :domain => env[:machine].name.to_s.sub(/^[^.]+\./,''),
                    :hostName => RbVmomi::VIM.CustomizationFixedName(
-                               :name => env[:machine].name))
+                               :name => env[:machine].name.to_s.split('.')[0]))
             
             adapter = RbVmomi::VIM.CustomizationIPSettings(
                       :gateway => [config.gateway],

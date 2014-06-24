@@ -27,7 +27,7 @@ module VagrantPlugins
 
           vm = root_vm_folder.findByUuid(env[:machine].id)
 
-          @logger.debug("Current power state: #{vm.runtime.powerState}")
+          #@logger.debug("Current power state: #{vm.runtime.powerState}")
           vm_name = env[:machine].name
 
           if env[:machine].id.nil?
