@@ -112,8 +112,6 @@ module VagrantPlugins
                               :portgroupKey => network.key)
                 card.backing = RbVmomi::VIM.VirtualEthernetCardDistributedVirtualPortBackingInfo(
                                :port => switch_port)
-              else
-                abort "vm network type of #{config.vm_network_type} is unknown"
               end 
               dev_spec = RbVmomi::VIM.VirtualDeviceConfigSpec(:device => card, :operation => "edit")
               config_spec.deviceChange = [dev_spec]
