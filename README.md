@@ -1,34 +1,21 @@
 [Vagrant](http://www.vagrantup.com) provider for VMware vCenter®
 =============
 
-[Version 0.2.0](../../releases/tag/v0.2.0) has been released!
+[Version 0.2.1](../../releases/tag/v0.2.1) has been released!
 -------------
 
 Please note that this software is still Alpha/Beta quality and is not recommended for production usage.
 
-Right now a [Precise32](http://vagrant.gosddc.com/boxes/precise32-vcenter.box) is available for use, or you can roll your own as you please, make sure to install VMware tools in it.
+We have a wide array of boxes available at [Vagrant Cloud](https://vagrantcloud.com/gosddc) you can use them directly or you can roll your own as you please, make sure to install VMware tools in it.
 
-Changes in [version 0.2.0](../../releases/tag/v0.2.0) include:
-
-New Features
-
-- Add option to set the actual vm name
-- Set some options in the vm via linux prep
-- Static networking
-- Hostname
-- Add option to set vmnetwork name and backing
-- Vagrant now uses builtin ```SyncedFolders``` helper to synchronize folders
+Changes in [version 0.2.1](../../releases/tag/v0.2.1) include:
 
 Fixes
 
-- Fix the read_ssh_info if the vm doesn't have a network yet at first try the later ssh's wont forever fail
+- Hostname using linux prep needs to be hostname and domain not fqdn on both.
+- Checking the power state at that spot can cause ruby exceptions to be thrown.
 
-Many thanks to [Karl Pietri](https://github.com/BarnacleBob) for submitting PR [#4](https://github.com/gosddc/vagrant-vcenter/pull/4) with all these new features!
-
-Changes in [version 0.1.1](../../releases/tag/v0.1.1) include:
-
-- Support for ```vagrant share``` [Fixes [#2](../../issues/2)]
-- Support for [Vagrant Cloud](http://vagrantcloud.com) boxes [Fixes [#1](../../issues/1)]
+Thanks to [Karl Pietri](https://github.com/BarnacleBob) for this PR.
 
 Install
 -------------
@@ -53,21 +40,11 @@ Configuration
 Here's a sample Multi-VM Vagrantfile:
 
 ```ruby
-precise32_box_url = 'http://vagrant.gosddc.com/boxes/precise32-vcenter.box'
-
 nodes = [
-  { hostname: 'web-vm',
-    box: 'precise32',
-    box_url: precise32_box_url },
-  { hostname: 'ssh-vm',
-    box: 'precise32',
-    box_url: precise32_box_url },
-  { hostname: 'sql-vm',
-    box: 'precise32',
-    box_url: precise32_box_url },
-  { hostname: 'lb-vm',
-    box: 'precise32',
-    box_url: precise32_box_url }
+  { hostname: 'web-vm', box: 'gosddc/precise32' },
+  { hostname: 'ssh-vm', box: 'gosddc/precise32' },
+  { hostname: 'sql-vm', box: 'gosddc/precise32' },
+  { hostname: 'lb-vm', box: 'gosddc/precise32' }
 ]
 
 Vagrant.configure('2') do |config|
