@@ -112,8 +112,6 @@ module VagrantPlugins
                               :portgroupKey => network.key)
                 card.backing = RbVmomi::VIM.VirtualEthernetCardDistributedVirtualPortBackingInfo(
                                :port => switch_port)
-              else
-                abort "vm network type of #{config.vm_network_type} is unknown"
               end 
               dev_spec = RbVmomi::VIM.VirtualDeviceConfigSpec(:device => card, :operation => "edit")
               config_spec.deviceChange = [dev_spec]
@@ -128,9 +126,9 @@ module VagrantPlugins
                           :dnsSuffixList => config.dns_suffix_list)
 
             prep = RbVmomi::VIM.CustomizationLinuxPrep(
-                   :domain => env[:machine].name,
+                   :domain => env[:machine].name.to_s.sub(/^[^.]+\./,''),
                    :hostName => RbVmomi::VIM.CustomizationFixedName(
-                               :name => env[:machine].name))
+                               :name => env[:machine].name.to_s.split('.')[0]))
             
             adapter = RbVmomi::VIM.CustomizationIPSettings(
                       :gateway => [config.gateway],
