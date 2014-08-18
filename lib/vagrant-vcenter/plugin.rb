@@ -22,7 +22,7 @@ module VagrantPlugins
 
       # We provide support for multiple box formats, including the new standard
       # 'vmware_ovf' and the legacy 'vcloud' and 'vcenter'.
-      provider(:vcenter, box_format: %w[vmware_ovf vcloud vcenter]) do
+      provider(:vcenter, box_format: %w[vmware_ovf vcloud vcenter], parallel: true) do
         setup_logging
         setup_i18n
 
