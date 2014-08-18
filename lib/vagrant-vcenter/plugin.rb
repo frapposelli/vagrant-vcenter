@@ -4,8 +4,8 @@ rescue LoadError
   raise 'The Vagrant vCenter plugin must be run within Vagrant.'
 end
 
-if Vagrant::VERSION < '1.5.0'
-  fail 'The Vagrant vCenter plugin is only compatible with Vagrant 1.5+'
+if Vagrant::VERSION < '1.6.0'
+  fail 'The Vagrant vCenter plugin is only compatible with Vagrant 1.6+'
 end
 
 module VagrantPlugins
