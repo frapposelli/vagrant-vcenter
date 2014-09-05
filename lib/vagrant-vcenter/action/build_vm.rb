@@ -200,6 +200,7 @@ module VagrantPlugins
               vm_folder = root_vm_folder.traverse(config.folder_name,
                                                   RbVmomi::VIM::Folder,
                                                   create = true)
+            # FIXME: we should trap the correct exception
             rescue RbVmomi::Fault
               # if somebody else created the folder already...
               @logger.debug("Folder #{config.folder_name} already exists.")
