@@ -4,8 +4,8 @@ rescue LoadError
   raise 'The Vagrant vCenter plugin must be run within Vagrant.'
 end
 
-if Vagrant::VERSION < '1.5.0'
-  fail 'The Vagrant vCenter plugin is only compatible with Vagrant 1.5+'
+if Vagrant::VERSION < '1.6.0'
+  fail 'The Vagrant vCenter plugin is only compatible with Vagrant 1.6+'
 end
 
 module VagrantPlugins
@@ -20,7 +20,9 @@ module VagrantPlugins
         Config
       end
 
-      provider(:vcenter) do
+      # We provide support for multiple box formats, including the new standard
+      # 'vmware_ovf' and the legacy 'vcloud' and 'vcenter'.
+      provider(:vcenter, box_format: %w[vmware_ovf vcloud vcenter], parallel: true) do
         setup_logging
         setup_i18n
 
@@ -33,6 +35,16 @@ module VagrantPlugins
       provider_capability('vcenter', 'public_address') do
         require_relative 'cap/public_address'
         Cap::PublicAddress
+      end
+
+      provider_capability(:vcenter, :winrm_info) do
+        require_relative 'cap/winrm_info'
+        Cap::WinRM
+      end
+
+      provider_capability(:vcenter, :rdp_info) do
+        require_relative 'cap/rdp_info'
+        Cap::RDP
       end
 
       def self.setup_i18n

@@ -13,6 +13,7 @@ module VagrantPlugins
       def self.action_boot
         Vagrant::Action::Builder.new.tap do |b|
           b.use PowerOn
+          b.use PrepareNFSSettings
           b.use Provision
           b.use SyncedFolders
         end
@@ -93,10 +94,16 @@ module VagrantPlugins
             if env[:result]
               b2.use ConfigValidate
               b2.use ConnectvCenter
-              b2.use Call, IsRunning do |env2, b3|
-              # If the VM is running, must power off
-                b3.use action_halt if env2[:result]
-                b3.use Destroy
+              b2.use Call, IsCreated do |env2, b3|
+                unless env2[:result]
+                  b3.use MessageNotCreated
+                  next
+                end
+                b3.use Call, IsRunning do |env3, b4|
+                # If the VM is running, must power off
+                  b4.use action_halt if env3[:result]
+                  b4.use Destroy
+                end
               end
             else
               b2.use MessageWillNotDestroy
@@ -113,6 +120,7 @@ module VagrantPlugins
               b2.use MessageNotCreated
               next
             end
+            b2.use PrepareNFSSettings
             b2.use Provision
             b2.use SyncedFolders
           end
@@ -170,10 +178,10 @@ module VagrantPlugins
       def self.action_up
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
+          b.use ConnectvCenter
           b.use Call, IsCreated do |env, b2|
             b2.use HandleBox unless env[:result]
           end
-          b.use ConnectvCenter
           b.use InventoryCheck
           b.use Call, IsCreated do |env, b2|
             b2.use BuildVM unless env[:result]
@@ -216,6 +224,8 @@ module VagrantPlugins
                action_root.join('power_off')
       autoload :PowerOn,
                action_root.join('power_on')
+      autoload :PrepareNFSSettings,
+               action_root.join('prepare_nfs_settings')
       autoload :ReadSSHInfo,
                action_root.join('read_ssh_info')
       autoload :ReadState,

@@ -1,21 +1,24 @@
 [Vagrant](http://www.vagrantup.com) provider for VMware vCenter®
 =============
 
-[Version 0.2.1](../../releases/tag/v0.2.1) has been released!
+[Version 0.3.0](../../releases/tag/v0.3.0) has been released!
 -------------
 
 Please note that this software is still Alpha/Beta quality and is not recommended for production usage.
 
 We have a wide array of boxes available at [Vagrant Cloud](https://vagrantcloud.com/gosddc) you can use them directly or you can roll your own as you please, make sure to install VMware tools in it.
 
-Changes in [version 0.2.1](../../releases/tag/v0.2.1) include:
+This plugin supports the universal [```vmware_ovf``` box format](https://github.com/gosddc/packer-post-processor-vagrant-vmware-ovf/wiki/vmware_ovf-Box-Format), that is 100% portable between [vagrant-vcloud](https://github.com/frapposelli/vagrant-vcloud), [vagrant-vcenter](https://github.com/gosddc/vagrant-vcenter) and [vagrant-vcloudair](https://github.com/gosddc/vagrant-vcloudair), no more double boxes!.
+
+Changes in [version 0.3.0](../../releases/tag/v0.3.0) include:
 
 Fixes
 
-- Hostname using linux prep needs to be hostname and domain not fqdn on both.
-- Checking the power state at that spot can cause ruby exceptions to be thrown.
-
-Thanks to [Karl Pietri](https://github.com/BarnacleBob) for this PR.
+- ```vmware_ovf``` support!
+- You can now specify network using the ```public_network``` notation of Vagrant.
+- Plugin is now operating in parallel, MOAR SPEED!
+- Create the VM folder if it doesn't exist.
+- Several bug fixes.
 
 Install
 -------------
@@ -40,44 +43,74 @@ Configuration
 Here's a sample Multi-VM Vagrantfile:
 
 ```ruby
-nodes = [
-  { hostname: 'web-vm', box: 'gosddc/precise32' },
-  { hostname: 'ssh-vm', box: 'gosddc/precise32' },
-  { hostname: 'sql-vm', box: 'gosddc/precise32' },
-  { hostname: 'lb-vm', box: 'gosddc/precise32' }
-]
+ENV['VAGRANT_DEFAULT_PROVIDER'] = 'vcenter'
+
+nodes = []
+
+[*1..5].each do |n|
+  nodes << { hostname: "centos#{n}",
+             box: 'gosddc/centos65-x64',
+             ip: "10.250.21.#{n}",
+             mem: 1024 * n,
+             cpu: n }
+end
+
+[*1..5].each do |n|
+  nodes << { hostname: "precise#{n}",
+             box: 'gosddc/precise32',
+             ip: "10.250.22.#{n}",
+             mem: 1024 * n,
+             cpu: n }
+end
 
 Vagrant.configure('2') do |config|
 
-  config.vm.provider :vcenter do |vcenter|
-    vcenter.hostname = 'my.vcenter.hostname'
-    vcenter.username = 'myUsername'
-    vcenter.password = 'myPassword'
-    vcenter.folder_name = 'myFolderName'
-    vcenter.datacenter_name = 'MyDatacenterName'
-    vcenter.computer_name = 'MyHostOrCluster'
-    vcenter.datastore_name = 'MyDatastore'
-    vcenter.template_folder_name = 'My/Template/Folder/Path'
-    vcenter.network_name = 'myNetworkName'
-    # If you want to use linked clones, set this to true
-    vcenter.linked_clones = true
-  end
-
-  # Go through nodes and configure each of them.j
+  # Go through nodes and configure each of them.
   nodes.each do |node|
+
+    config.vm.provider :vcenter do |vcenter|
+      vcenter.hostname = 'my.vcenter.hostname'
+      vcenter.username = 'myUsername'
+      vcenter.password = 'myPassword'
+      vcenter.folder_name = 'myFolderName'
+      vcenter.datacenter_name = 'MyDatacenterName'
+      vcenter.computer_name = 'MyHostOrCluster'
+      vcenter.datastore_name = 'MyDatastore'
+      vcenter.network_name = 'myNetworkName'
+      vcenter.linked_clones = true
+    end
+
     config.vm.define node[:hostname] do |node_config|
       node_config.vm.box = node[:box]
       node_config.vm.hostname = node[:hostname]
-      node_config.vm.box_url = node[:box_url]
-    #   node_config.vm.provision :puppet do |puppet|
-    #     puppet.manifests_path = 'puppet/manifests'
-    #     puppet.manifest_file = 'site.pp'
-    #     puppet.module_path = 'puppet/modules'
-    #     puppet.options = "--verbose --debug"
-    #   end
+
+      # Let's configure the network for the VM, only the ip changes and is
+      # coming from the nodes array
+      node_config.vm.network :public_network,
+                             ip: node[:ip],
+                             netmask: '255.255.0.0',
+                             gateway: '10.250.254.254',
+                             dns_server_list: ['8.8.4.4', '8.8.8.8'],
+                             dns_suffix_list: ['ad.lab.gosddc.com']
+      
+      # Let's override some provider settings for specific VMs
+      node_config.vm.provider :vcenter do |override|
+        # Override number of cpu and memory based on what's in the nodes array
+        override.num_cpu = node[:cpu]
+        override.memory = node[:mem]
+        case node[:hostname]
+        # Override the folder name based on the hostname of the VM
+        when /centos/
+          override.folder_name = 'Vagrant/centos'
+        when /precise/
+          override.folder_name = 'Vagrant/ubuntu/precise'
+        end
+      end
+      node_config.nfs.functional = false
     end
   end
 end
+
 ```
 
 Contribute
