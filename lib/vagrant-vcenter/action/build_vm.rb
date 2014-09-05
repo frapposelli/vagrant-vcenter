@@ -116,34 +116,61 @@ module VagrantPlugins
               dev_spec = RbVmomi::VIM.VirtualDeviceConfigSpec(:device => card, :operation => "edit")
               config_spec.deviceChange = [dev_spec]
             end
-            
+
             spec.config = config_spec
           end
 
-          if config.enable_vm_customization or config.enable_vm_customization == 'true'
-            gIPSettings = RbVmomi::VIM.CustomizationGlobalIPSettings(
-                          :dnsServerList => config.dns_server_list,
-                          :dnsSuffixList => config.dns_suffix_list)
+          public_networks = env[:machine].config.vm.networks.select {
+                              |n| n[0].eql? :public_network
+          }
+
+          network_spec = public_networks.first[1]
+
+          @logger.debug("This is our network #{public_networks.inspect}")
+
+          if network_spec
+
+            # Check for sanity and validation of network parameters.
+
+            # Specify ip but no netmask
+            if network_spec[:ip] && !network_spec[:netmask]
+              fail Errors::WrongNetworkSpec
+            end
+
+            # specify netmask but no ip
+            if !network_spec[:ip] && network_spec[:netmask]
+              fail Errors::WrongNetworkSpec
+            end
+
+            global_ip_settings = RbVmomi::VIM.CustomizationGlobalIPSettings(
+                  :dnsServerList => network_spec[:dns_server_list],
+                  :dnsSuffixList => network_spec[:dns_suffix_list])
 
             prep = RbVmomi::VIM.CustomizationLinuxPrep(
-                   :domain => env[:machine].name.to_s.sub(/^[^.]+\./,''),
+                   :domain => env[:machine].name.to_s.sub(/^[^.]+\./, ''),
                    :hostName => RbVmomi::VIM.CustomizationFixedName(
                                :name => env[:machine].name.to_s.split('.')[0]))
-            
-            adapter = RbVmomi::VIM.CustomizationIPSettings(
-                      :gateway => [config.gateway],
-                      :ip => RbVmomi::VIM.CustomizationFixedIp(
-                            :ipAddress => config.ipaddress),
-                      :subnetMask => config.netmask)
-            
+
+            # if no ip and no netmask, let's default to dhcp
+            if !network_spec[:ip] && !network_spec[:netmask]
+              adapter = RbVmomi::VIM.CustomizationIPSettings(
+                        :ip => RbVmomi::VIM.CustomizationDhcpIpGenerator())
+            else
+              adapter = RbVmomi::VIM.CustomizationIPSettings(
+                        :gateway => [network_spec[:gateway]],
+                        :ip => RbVmomi::VIM.CustomizationFixedIp(
+                              :ipAddress => network_spec[:ip]),
+                        :subnetMask => network_spec[:netmask])
+            end
+
             nic_map = [RbVmomi::VIM.CustomizationAdapterMapping(
                        :adapter => adapter)]
 
             cust_spec = RbVmomi::VIM.CustomizationSpec(
-                        :globalIPSettings => gIPSettings,
+                        :globalIPSettings => global_ip_settings,
                         :identity => prep,
                         :nicSettingMap => nic_map)
- 
+
             spec.customization = cust_spec
           end
 
@@ -151,7 +178,7 @@ module VagrantPlugins
 
           @logger.debug("disable_auto_vm_name: #{config.disable_auto_vm_name}")
 
-          if config.disable_auto_vm_name or config.disable_auto_vm_name == 'true'
+          if config.disable_auto_vm_name || config.disable_auto_vm_name == 'true'
             vm_target = vm_name.to_s
           else
             vm_target = "Vagrant-#{Etc.getlogin}-" +
@@ -167,8 +194,18 @@ module VagrantPlugins
           root_vm_folder = dc.vmFolder
           vm_folder = root_vm_folder
           unless config.folder_name.nil?
-            vm_folder = root_vm_folder.traverse(config.folder_name,
-                                                RbVmomi::VIM::Folder)
+            begin
+              # Better ask for forgiveness than permission ;-)
+              @logger.debug("Creating folder #{config.folder_name}.")
+              vm_folder = root_vm_folder.traverse(config.folder_name,
+                                                  RbVmomi::VIM::Folder,
+                                                  create = true)
+            rescue RbVmomi::Fault
+              # if somebody else created the folder already...
+              @logger.debug("Folder #{config.folder_name} already exists.")
+              vm_folder = root_vm_folder.traverse(config.folder_name,
+                                                  RbVmomi::VIM::Folder)
+            end
           end
           @logger.debug("folder for VM: #{vm_folder}")
 

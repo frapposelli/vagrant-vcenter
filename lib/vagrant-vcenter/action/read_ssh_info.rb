@@ -39,6 +39,9 @@ module VagrantPlugins
             return nil
           end
 
+          @logger.debug("Setting nfs_machine_ip to #{address}")
+          env[:nfs_machine_ip] = address
+
           { :host => address, :port => 22 }
         end
       end
