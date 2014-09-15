@@ -4,6 +4,8 @@
 [Version 0.3.0](../../releases/tag/v0.3.0) has been released!
 -------------
 
+## Version 0.3.0 doesn't work with Vagrant 1.6.5+, another version is coming, please use Vagrant 1.6.3 in the meantime
+
 Please note that this software is still Alpha/Beta quality and is not recommended for production usage.
 
 We have a wide array of boxes available at [Vagrant Cloud](https://vagrantcloud.com/gosddc) you can use them directly or you can roll your own as you please, make sure to install VMware tools in it.
