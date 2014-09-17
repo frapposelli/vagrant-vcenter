@@ -22,6 +22,7 @@ module VagrantPlugins
       def self.action_reload
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
+          b.use ConnectvCenter
           b.use Call, IsCreated do |env, b2|
             unless env[:result]
               b2.use MessageNotCreated
@@ -115,6 +116,7 @@ module VagrantPlugins
       def self.action_provision
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
+          b.use ConnectvCenter
           b.use Call, IsCreated do |env, b2|
             unless env[:result]
               b2.use MessageNotCreated
@@ -152,6 +154,7 @@ module VagrantPlugins
       def self.action_ssh
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
+          b.use ConnectvCenter
           b.use Call, IsCreated do |env, b2|
             unless env[:result]
               b2.use MessageNotCreated
@@ -165,6 +168,7 @@ module VagrantPlugins
       def self.action_ssh_run
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
+          b.use ConnectvCenter
           b.use Call, IsCreated do |env, b2|
             unless env[:result]
               b2.use MessageNotCreated
