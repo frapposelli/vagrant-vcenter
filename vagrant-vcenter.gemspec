@@ -14,7 +14,6 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency 'vagrant-rbvmomi', '~> 1.8.1'
   s.add_runtime_dependency 'log4r', '~> 1.1.10'
-  s.add_runtime_dependency 'nokogiri', '1.5.5'
   s.add_runtime_dependency 'pry'
 
   s.add_development_dependency 'rake'
