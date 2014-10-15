@@ -40,7 +40,14 @@ module VagrantPlugins
           # FIXME: Raise a correct exception
           computer = dc.find_compute_resource(
                         config.computer_name) or fail 'Host not found'
-          rp = computer.resourcePool
+
+          if config.resourcepool_name
+            rp = computer.resourcePool.resourcePool.find {
+              |f| f.name == config.resourcepool_name
+            }
+          else
+            rp = computer.resourcePool
+          end
 
           # FIXME: Raise a correct exception
           template = dc.find_vm(

@@ -28,6 +28,11 @@ module VagrantPlugins
       # @return [String]
       attr_accessor :folder_name
 
+      # Resource Pool Name where the item will live
+      #
+      # @return [String]
+      attr_accessor :resourcepool_name
+
       # Catalog Name where the item resides
       #
       # @return [String]
