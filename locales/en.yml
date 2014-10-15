@@ -27,7 +27,7 @@ en:
       resourcepool_name: |-
         Configuration must specify a resource pool name
       no_prep_type: |-
-        The only supported prep type is linux.  hack away.
+        The only supported prep types are windows and linux.
       ipaddress: |-
         Configuration must specify a ipaddress
       gateway: |-

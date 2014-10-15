@@ -1,7 +1,7 @@
 [Vagrant](http://www.vagrantup.com) provider for VMware vCenter®
 =============
 
-[Version 0.3.1](../../releases/tag/v0.3.1) has been released!
+[Version 0.3.2](../../releases/tag/v0.3.2) has been released!
 -------------
 
 Please note that this software is still Alpha/Beta quality and is not recommended for production usage.
@@ -94,6 +94,7 @@ Vagrant.configure('2') do |config|
           override.folder_name = 'Vagrant/centos'
         when /precise/
           override.folder_name = 'Vagrant/ubuntu/precise'
+          override.enable_vm_customization = false
         end
       end
       node_config.nfs.functional = false

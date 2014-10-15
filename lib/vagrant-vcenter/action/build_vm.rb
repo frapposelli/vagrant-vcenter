@@ -40,7 +40,14 @@ module VagrantPlugins
           # FIXME: Raise a correct exception
           computer = dc.find_compute_resource(
                         config.computer_name) or fail 'Host not found'
-          rp = computer.resourcePool
+
+          if config.resourcepool_name
+            rp = computer.resourcePool.resourcePool.find {
+              |f| f.name == config.resourcepool_name
+            }
+          else
+            rp = computer.resourcePool
+          end
 
           # FIXME: Raise a correct exception
           template = dc.find_vm(
@@ -120,61 +127,105 @@ module VagrantPlugins
             spec.config = config_spec
           end
 
-          public_networks = env[:machine].config.vm.networks.select {
-                              |n| n[0].eql? :public_network
-          }
+          if config.enable_vm_customization
+            public_networks = env[:machine].config.vm.networks.select {
+                                |n| n[0].eql? :public_network
+            }
 
-          network_spec = public_networks.first[1]
+            network_spec = public_networks.first[1] unless public_networks.empty?
 
-          @logger.debug("This is our network #{public_networks.inspect}")
+            @logger.debug("This is our network #{public_networks.inspect}")
 
-          if network_spec
+            if network_spec
 
-            # Check for sanity and validation of network parameters.
+              # Check for sanity and validation of network parameters.
 
-            # Specify ip but no netmask
-            if network_spec[:ip] && !network_spec[:netmask]
-              fail Errors::WrongNetworkSpec
+              # Specify ip but no netmask
+              if network_spec[:ip] && !network_spec[:netmask]
+                fail Errors::WrongNetworkSpec
+              end
+
+              # specify netmask but no ip
+              if !network_spec[:ip] && network_spec[:netmask]
+                fail Errors::WrongNetworkSpec
+              end
+
+              global_ip_settings = RbVmomi::VIM.CustomizationGlobalIPSettings(
+                    :dnsServerList => network_spec[:dns_server_list],
+                    :dnsSuffixList => network_spec[:dns_suffix_list])
+
+              # if no ip and no netmask, let's default to dhcp
+              if !network_spec[:ip] && !network_spec[:netmask]
+                adapter = RbVmomi::VIM.CustomizationIPSettings(
+                          :ip => RbVmomi::VIM.CustomizationDhcpIpGenerator())
+              else
+                adapter = RbVmomi::VIM.CustomizationIPSettings(
+                          :gateway => [network_spec[:gateway]],
+                          :ip => RbVmomi::VIM.CustomizationFixedIp(
+                                :ipAddress => network_spec[:ip]),
+                          :subnetMask => network_spec[:netmask])
+              end
+
+              nic_map = [RbVmomi::VIM.CustomizationAdapterMapping(
+                         :adapter => adapter)]
             end
 
-            # specify netmask but no ip
-            if !network_spec[:ip] && network_spec[:netmask]
-              fail Errors::WrongNetworkSpec
+            if config.prep_type.downcase == 'linux'
+              prep = RbVmomi::VIM.CustomizationLinuxPrep(
+                     :domain => env[:machine].name.to_s.sub(/^[^.]+\./, ''),
+                     :hostName => RbVmomi::VIM.CustomizationFixedName(
+                                  :name => env[:machine].name.to_s.split('.')[0]))
+            elsif config.prep_type.downcase == 'windows'
+              prep = RbVmomi::VIM.CustomizationSysprep(
+                      :guiUnattended => RbVmomi::VIM.CustomizationGuiUnattended(
+                        :autoLogon => false,
+                        :autoLogonCount => 0,
+                        :timeZone => 004
+                      ),
+                      :identification => RbVmomi::VIM.CustomizationIdentification(),
+                      :userData => RbVmomi::VIM.CustomizationUserData(
+                        :computerName => RbVmomi::VIM.CustomizationFixedName(
+                          :name => env[:machine].name.to_s.split('.')[0]),
+                        :fullName => 'Vagrant',
+                        :orgName => 'Vagrant',
+                        :productId => 'XXXXX-XXXXX-XXXXX-XXXXX-XXXXX'
+                  )
+              )
+            else 
+              fail "specification type #{config.prep_type} not supported"
             end
 
-            global_ip_settings = RbVmomi::VIM.CustomizationGlobalIPSettings(
-                  :dnsServerList => network_spec[:dns_server_list],
-                  :dnsSuffixList => network_spec[:dns_suffix_list])
+            if prep && network_spec
+              # If prep and network specification are present, let's do a full config
+              cust_spec = RbVmomi::VIM.CustomizationSpec(
+                          :globalIPSettings => global_ip_settings,
+                          :identity => prep,
+                          :nicSettingMap => nic_map)
 
-            prep = RbVmomi::VIM.CustomizationLinuxPrep(
-                   :domain => env[:machine].name.to_s.sub(/^[^.]+\./, ''),
-                   :hostName => RbVmomi::VIM.CustomizationFixedName(
-                               :name => env[:machine].name.to_s.split('.')[0]))
+              spec.customization = cust_spec
 
-            # if no ip and no netmask, let's default to dhcp
-            if !network_spec[:ip] && !network_spec[:netmask]
+            elsif prep && !network_spec
+              # If no network specifications, default to dhcp
+              global_ip_settings = RbVmomi::VIM.CustomizationGlobalIPSettings(
+                :dnsServerList => [],
+                :dnsSuffixList => [])
+
               adapter = RbVmomi::VIM.CustomizationIPSettings(
-                        :ip => RbVmomi::VIM.CustomizationDhcpIpGenerator())
-            else
-              adapter = RbVmomi::VIM.CustomizationIPSettings(
-                        :gateway => [network_spec[:gateway]],
-                        :ip => RbVmomi::VIM.CustomizationFixedIp(
-                              :ipAddress => network_spec[:ip]),
-                        :subnetMask => network_spec[:netmask])
+                :ip => RbVmomi::VIM.CustomizationDhcpIpGenerator())
+
+              nic_map = [RbVmomi::VIM.CustomizationAdapterMapping(
+                 :adapter => adapter)]
+
+              cust_spec = RbVmomi::VIM.CustomizationSpec(
+                          :globalIPSettings => global_ip_settings,
+                          :identity => prep,
+                          :nicSettingMap => nic_map)
+
+              spec.customization = cust_spec
             end
 
-            nic_map = [RbVmomi::VIM.CustomizationAdapterMapping(
-                       :adapter => adapter)]
-
-            cust_spec = RbVmomi::VIM.CustomizationSpec(
-                        :globalIPSettings => global_ip_settings,
-                        :identity => prep,
-                        :nicSettingMap => nic_map)
-
-            spec.customization = cust_spec
+            @logger.debug("Spec: #{spec.pretty_inspect}")
           end
-
-          @logger.debug("Spec: #{spec.pretty_inspect}")
 
           @logger.debug("disable_auto_vm_name: #{config.disable_auto_vm_name}")
 
