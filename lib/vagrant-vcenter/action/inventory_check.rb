@@ -37,9 +37,6 @@ module VagrantPlugins
 
           box_ovf = "file://#{box_dir}/#{box_file}.ovf"
 
-          # Still relying on ruby-progressbar because report_progress basically
-          # sucks.
-
           @logger.debug("OVF File: #{box_ovf}")
 
           env[:ui].info("Adding [#{box_name}]")
@@ -51,12 +48,11 @@ module VagrantPlugins
           root_vm_folder = dc.vmFolder
           vm_folder = root_vm_folder
           if config.template_folder_name.nil?
-            vm_folder = root_vm_folder.traverse(config.template_folder_name,
-                                                RbVmomi::VIM::Folder)
+            template_folder = root_vm_folder
+          else
+            template_folder = root_vm_folder.traverse!(
+                              config.template_folder_name, RbVmomi::VIM::Folder)
           end
-          template_folder = root_vm_folder.traverse!(
-                            config.template_folder_name,
-                            RbVmomi::VIM::Folder)
 
           template_name = box_name
 
@@ -109,8 +105,7 @@ module VagrantPlugins
           if config.template_folder_name.nil?
             box_to_search = box_name
           else
-            box_to_search = config.template_folder_name +
-                            '/' + box_name
+            box_to_search = config.template_folder_name + '/' + box_name
           end
 
           @logger.debug("This is the box we're looking for: #{box_to_search}")
@@ -118,25 +113,13 @@ module VagrantPlugins
           config.template_id = dc.find_vm(box_to_search)
 
           if config.template_id.nil?
-            env[:ui].warn("Template [#{box_name}] " +
-                          'does not exist!')
+            # Roll a dice to get a winner in the race.
+            sleep_time = rand * (3 - 1) + 1
+            @logger.debug("Sleeping #{sleep_time} to avoid race conditions.")
+            sleep(sleep_time)
 
-            user_input = env[:ui].ask(
-              "Would you like to upload the [#{box_name}]" +
-              " box?\nChoice (yes/no): "
-            )
-
-            if user_input.downcase == 'yes' || user_input.downcase == 'y'
-              env[:ui].info("Uploading [#{box_name}]...")
-              vcenter_upload_box(env)
-            else
-              env[:ui].error('Template not uploaded, exiting...')
-
-              # FIXME: wrong error message
-              fail VagrantPlugins::VCenter::Errors::VCenterError,
-                   :message => 'Catalog not available, exiting...'
-
-            end
+            env[:ui].info("Uploading [#{box_name}]...")
+            vcenter_upload_box(env)
           else
             @logger.debug("Template found at #{box_to_search}")
           end
