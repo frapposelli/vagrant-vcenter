@@ -37,7 +37,7 @@ module VagrantPlugins
         Cap::PublicAddress
       end
 
-      provider_capability(:vcenter, :winrm_info) do
+      provider_capability(:vcenter, :read_winrm_info) do
         require_relative 'cap/winrm_info'
         Cap::WinRM
       end
