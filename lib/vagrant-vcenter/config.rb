@@ -28,6 +28,11 @@ module VagrantPlugins
       # @return [String]
       attr_accessor :folder_name
 
+      # Resource Pool Name where the item will live
+      #
+      # @return [String]
+      attr_accessor :resourcepool_name
+
       # Catalog Name where the item resides
       #
       # @return [String]
@@ -75,6 +80,20 @@ module VagrantPlugins
       # @return [String]
       attr_accessor :vm_network_type
 
+      # Use prep and customization api in the building
+      # of the vm in vcenter
+      #
+      # Mostly this allows the static ip configuration
+      # of a vm
+      #
+      # @return [Bool]
+      attr_accessor :enable_vm_customization
+
+      # Type of the machine prep to use
+      #
+      # @return [String]
+      attr_accessor :prep_type
+
       # num cpu
       #
       # @return [Fixnum]
@@ -92,6 +111,11 @@ module VagrantPlugins
       # connection handle
       attr_accessor :vcenter_cnx
       attr_accessor :template_id
+
+      def initialize
+        @prep_type = 'linux'
+        @enable_vm_customization = true
+      end
 
       def validate(machine)
         errors = _detected_errors
@@ -111,7 +135,10 @@ module VagrantPlugins
         I18n.t('vagrant_vcenter.config.computer_name') if computer_name.nil?
         errors <<
         I18n.t('vagrant_vcenter.config.network_name') if network_name.nil?
-
+        if enable_vm_customization
+          errors <<
+          I18n.t('vagrant_vcenter.config.no_prep_type') if prep_type.downcase != 'linux' && prep_type.downcase != 'windows'
+        end
         { 'vCenter Provider' => errors }
       end
     end
