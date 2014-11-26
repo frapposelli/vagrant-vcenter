@@ -1,4 +1,4 @@
-en: 
+en:
   vagrant_vcenter:
     power:
       vm_not_created: |-
@@ -9,7 +9,7 @@ en:
         VM is already running
       vm_halted_cannot_suspend: |-
         VM is not running or already suspended, cannot suspend it.
-    config: 
+    config:
       hostname: |-
         Configuration must specify a vCenter hostname
       username: |-
@@ -20,7 +20,7 @@ en:
         Configuration must specify a Datastore (for the VM templates images)
       datacenter_name: |-
         Configuration must specify a vCenter Datacenter
-      computer_name: |-
+      compute_name: |-
         Configuration must specify a compute resource name
       network_name: |-
         Configuration must specify a resource pool name
@@ -34,7 +34,7 @@ en:
         Configuration must specify a gateway
       netmask: |-
         Configuration must specify a netmask
-    states: 
+    states:
       not_created: |-
         The environment has not yet been created. Run `vagrant up` to
         create the environment. If a machine is not created, only the
@@ -50,3 +50,28 @@ en:
         shut it down forcefully, or you can run `vagrant suspend` to simply
         suspend the virtual machine. In either case, to restart it again,
         simply run `vagrant up`.
+    errors:
+      datacenter_not_found: |-
+        The Datacenter '%{datacenter_name}' was not found in this environment.
+        Verify that your Vagrantfile settings are correct.
+      compute_not_found: |-
+        The Cluster or Host '%{compute_name}' was not found in this environment.
+        Verify that your Vagrantfile settings are correct.
+      datastore_not_found: |-
+        The Datastore %{datastore_name} was not found in this environment.
+        Verify that your Vagrantfile settings are correct.
+      network_not_found: |-
+        The Network %{network_name} was not found in this environment.
+        Verify that your Vagrantfile settings are correct.
+      machine_not_running: |-
+        The Machine %{machine_name} is not currently running...
+        To start the VM you can simply run `vagrant up %{machine_name}`
+      vm_not_found: |-
+        The Virtual Machine %{vm_name} was not found in this environment.
+        This should not happen, please log an issue on Github
+      guest_custom_not_supported: |-
+        The Guest Customization process for %{type} is not supported.
+
+
+
+

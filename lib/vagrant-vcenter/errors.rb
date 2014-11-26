@@ -83,6 +83,34 @@ module VagrantPlugins
       class SyncError < VCenterError
         error_key(:sync_error)
       end
+      # Set key for DatacenterNotFound errors.
+      class DatacenterNotFound < VCenterError
+        error_key(:datacenter_not_found)
+      end
+      # Set key for ComputeNotFound errors.
+      class ComputeNotFound < VCenterError
+        error_key(:compute_not_found)
+      end
+      # Set key for DatastoreNotFound errors.
+      class DatastoreNotFound < VCenterError
+        error_key(:datastore_not_found)
+      end
+      # Set key for NetworkNotFound errors.
+      class NetworkNotFound < VCenterError
+        error_key(:network_not_found)
+      end
+      # Set key for MachineNotRunning errors.
+      class MachineNotRunning < VCenterError
+        error_key(:machine_not_running)
+      end
+      # Set key for VMNotFound errors.
+      class VMNotFound < VCenterError
+        error_key(:vm_not_found)
+      end
+      # Set key for GuestCustomNotSupported
+      class GuestCustomNotSupported < VCenterError
+        error_key(:guest_custom_not_supported)
+      end
     end
   end
 end
