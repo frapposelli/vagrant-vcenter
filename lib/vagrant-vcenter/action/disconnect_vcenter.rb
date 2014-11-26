@@ -6,18 +6,19 @@ module VagrantPlugins
         def initialize(app, env)
           @app = app
           @logger = Log4r::Logger.new(
-                    'vagrant_vcenter::action::disconnect_vcenter')
+            'vagrant_vcenter::action::disconnect_vcenter'
+          )
         end
 
         def call(env)
           @logger.info('Disconnecting from vCenter ...')
 
-          config = env[:machine].provider_config
+          cfg = env[:machine].provider_config
 
-          if !config.vcenter_cnx
-            @logger.info('Session not open, impossible to disconnect')
+          if !cfg.vcenter_cnx
+            @logger.info('No session active')
           else
-            config.vcenter_cnx.close
+            cfg.vcenter_cnx.close
             @logger.info('Succesfully disconnected from vCenter...')
           end
 

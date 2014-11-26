@@ -9,8 +9,9 @@ module VagrantPlugins
         end
 
         def call(env)
-          env[:ui].info(I18n.t(
-                        'vagrant_vcenter.power.vm_halted_cannot_suspend'))
+          env[:ui].info(
+            I18n.t('vagrant_vcenter.power.vm_halted_cannot_suspend')
+          )
           @app.call(env)
         end
       end

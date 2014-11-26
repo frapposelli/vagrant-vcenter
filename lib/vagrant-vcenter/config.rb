@@ -51,7 +51,7 @@ module VagrantPlugins
       # Virtual Data Center to be used
       #
       # @return [String]
-      attr_accessor :computer_name
+      attr_accessor :compute_name
 
       # Virtual Data Center Network to be used
       #
@@ -105,11 +105,37 @@ module VagrantPlugins
       attr_accessor :memory
 
       ##
-      ## vCenter  config runtime values
+      ## vCenter config runtime values
       ##
 
       # connection handle
       attr_accessor :vcenter_cnx
+
+      # Datacenter object
+      attr_accessor :datacenter
+
+      # Compute object
+      attr_accessor :compute
+
+      # Compute resource pool object
+      attr_accessor :compute_rp
+
+      # Datastore object
+      attr_accessor :datastore
+
+      # Network (dv)portgroup object
+      attr_accessor :network
+
+      # VM Folder object
+      attr_accessor :vmfolder
+
+      # Template object
+      attr_accessor :template
+
+      # Template folder object
+      attr_accessor :template_folder
+
+      # Template ID, not sure if used ... verify
       attr_accessor :template_id
 
       def initialize
@@ -122,22 +148,22 @@ module VagrantPlugins
 
         # TODO: add blank?
         errors <<
-        I18n.t('vagrant_vcenter.config.hostname') if hostname.nil?
+          I18n.t('vagrant_vcenter.config.hostname') if hostname.nil?
         errors <<
-        I18n.t('vagrant_vcenter.config.username') if username.nil?
+          I18n.t('vagrant_vcenter.config.username') if username.nil?
         errors <<
-        I18n.t('vagrant_vcenter.config.password') if password.nil?
+          I18n.t('vagrant_vcenter.config.password') if password.nil?
         errors <<
-        I18n.t('vagrant_vcenter.config.datastore_name') if datastore_name.nil?
+          I18n.t('vagrant_vcenter.config.datastore_name') if datastore_name.nil?
         errors <<
-        I18n.t('vagrant_vcenter.config.datacenter_name') if datacenter_name.nil?
+          I18n.t('vagrant_vcenter.config.datacenter_name') if datacenter_name.nil?
         errors <<
-        I18n.t('vagrant_vcenter.config.computer_name') if computer_name.nil?
+          I18n.t('vagrant_vcenter.config.compute_name') if compute_name.nil?
         errors <<
-        I18n.t('vagrant_vcenter.config.network_name') if network_name.nil?
+          I18n.t('vagrant_vcenter.config.network_name') if network_name.nil?
         if enable_vm_customization
           errors <<
-          I18n.t('vagrant_vcenter.config.no_prep_type') if prep_type.downcase != 'linux' && prep_type.downcase != 'windows'
+            I18n.t('vagrant_vcenter.config.no_prep_type') if prep_type.downcase != 'linux' && prep_type.downcase != 'windows'
         end
         { 'vCenter Provider' => errors }
       end
