@@ -48,8 +48,10 @@ module VagrantPlugins
       end
 
       def self.setup_i18n
-        I18n.load_path << File.expand_path('locales/en.yml',
-                                           VCenter.source_root)
+        I18n.load_path << File.expand_path(
+          'locales/en.yml',
+          VCenter.source_root
+        )
         I18n.reload!
       end
 

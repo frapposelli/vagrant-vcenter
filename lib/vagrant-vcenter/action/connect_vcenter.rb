@@ -1,6 +1,3 @@
-require 'rbvmomi'
-require 'log4r'
-
 module VagrantPlugins
   module VCenter
     module Action
@@ -9,25 +6,29 @@ module VagrantPlugins
         def initialize(app, env)
           @app = app
           @logger = Log4r::Logger.new(
-                      'vagrant_vcenter::action::connect_vCenter')
+            'vagrant_vcenter::action::connect_vcenter'
+          )
         end
 
         def call(env)
-          config = env[:machine].provider_config
+          cfg = env[:machine].provider_config
+
           # Avoid recreating a new session each time.
-          unless config.vcenter_cnx
+          unless cfg.vcenter_cnx
             @logger.info('Connecting to vCenter...')
 
-            @logger.debug("config.hostname: #{config.hostname}")
-            @logger.debug("config.username: #{config.username}")
-            @logger.debug('config.password: <hidden>')
+            @logger.debug("hostname: #{cfg.hostname}")
+            @logger.debug("username: #{cfg.username}")
+            @logger.debug('password: <hidden>')
 
             # FIXME: fix the insecure flag, catch the exception
-            config.vcenter_cnx = RbVmomi::VIM.connect(
-                                  host: config.hostname,
-                                  user: config.username,
-                                  password: config.password,
-                                  insecure: true)
+            cfg.vcenter_cnx = RbVmomi::VIM.connect(
+              host: cfg.hostname,
+              user: cfg.username,
+              password: cfg.password,
+              insecure: true
+            )
+
           end
           @app.call env
         end
