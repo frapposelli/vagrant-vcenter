@@ -23,6 +23,7 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
           b.use ConnectvCenter
+          b.use InventoryCheck
           b.use Call, IsCreated do |env, b2|
             unless env[:result]
               b2.use MessageNotCreated
@@ -30,7 +31,6 @@ module VagrantPlugins
             end
             b2.use action_halt
             b2.use action_start
-            b2.use DisconnectvCenter
           end
         end
       end
@@ -41,6 +41,7 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
           b.use ConnectvCenter
+          b.use InventoryCheck
           b.use Call, IsRunning do |env, b2|
             # If the VM is running, then our work here is done, exit
             if env[:result]
@@ -61,9 +62,16 @@ module VagrantPlugins
       def self.action_halt
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConnectvCenter
+          b.use InventoryCheck
+
+          # If the VM suspend, Resume first
           b.use Call, IsPaused do |env, b2|
             b2.use Resume if env[:result]
-            b2.use PowerOff
+
+            # Only halt when VM is running.
+            b2.use Call, IsRunning do |env2, b3|
+              b3.use PowerOff if env2[:result]
+            end
           end
         end
       end
@@ -71,6 +79,7 @@ module VagrantPlugins
       def self.action_suspend
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConnectvCenter
+          b.use InventoryCheck
           b.use Call, IsRunning do |env, b2|
             # If the VM is stopped, can't suspend
             if !env[:result]
@@ -85,6 +94,7 @@ module VagrantPlugins
       def self.action_resume
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConnectvCenter
+          b.use InventoryCheck
           b.use Resume
         end
       end
@@ -95,6 +105,7 @@ module VagrantPlugins
             if env[:result]
               b2.use ConfigValidate
               b2.use ConnectvCenter
+              b2.use InventoryCheck
               b2.use Call, IsCreated do |env2, b3|
                 unless env2[:result]
                   b3.use MessageNotCreated
@@ -110,6 +121,7 @@ module VagrantPlugins
               b2.use MessageWillNotDestroy
             end
           end
+          # b.use DisconnectvCenter
         end
       end
 
@@ -117,6 +129,7 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
           b.use ConnectvCenter
+          b.use InventoryCheck
           b.use Call, IsCreated do |env, b2|
             unless env[:result]
               b2.use MessageNotCreated
@@ -136,6 +149,7 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
           b.use ConnectvCenter
+          b.use InventoryCheck
           b.use ReadSSHInfo
         end
       end
@@ -147,6 +161,7 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
           b.use ConnectvCenter
+          b.use InventoryCheck
           b.use ReadState
         end
       end
@@ -155,6 +170,7 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
           b.use ConnectvCenter
+          b.use InventoryCheck
           b.use Call, IsCreated do |env, b2|
             unless env[:result]
               b2.use MessageNotCreated
@@ -169,6 +185,7 @@ module VagrantPlugins
         Vagrant::Action::Builder.new.tap do |b|
           b.use ConfigValidate
           b.use ConnectvCenter
+          b.use InventoryCheck
           b.use Call, IsCreated do |env, b2|
             unless env[:result]
               b2.use MessageNotCreated

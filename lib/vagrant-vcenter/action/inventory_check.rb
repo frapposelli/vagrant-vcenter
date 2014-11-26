@@ -14,7 +14,8 @@ module VagrantPlugins
         def initialize(app, env)
           @app = app
           @logger = Log4r::Logger.new(
-                    'vagrant_vcenter::action::inventory_check')
+            'vagrant_vcenter::action::inventory_check'
+          )
         end
 
         def call(env)
@@ -23,106 +24,110 @@ module VagrantPlugins
         end
 
         def vcenter_upload_box(env)
-          config = env[:machine].provider_config
+          cfg = env[:machine].provider_config
 
-          box_dir = env[:machine].box.directory.to_s
-
-          if env[:machine].box.name.to_s.include? '/'
-            box_file = env[:machine].box.name.rpartition('/').last.to_s
-            box_name = env[:machine].box.name.to_s.gsub(/\//, '-')
+          if env[:machine].box.name.include? '/'
+            box_file = env[:machine].box.name.rpartition('/').last
+            box_name = env[:machine].box.name.gsub(/\//, '-')
           else
-            box_file = env[:machine].box.name.to_s
+            box_file = env[:machine].box.name
             box_name = box_file
           end
 
-          box_ovf = "file://#{box_dir}/#{box_file}.ovf"
-
-          @logger.debug("OVF File: #{box_ovf}")
-
-          env[:ui].info("Adding [#{box_name}]")
-
-          # FIXME: Raise a correct exception
-          dc = config.vcenter_cnx.serviceInstance.find_datacenter(
-               config.datacenter_name) or fail 'datacenter not found'
-
-          root_vm_folder = dc.vmFolder
-          vm_folder = root_vm_folder
-          if config.template_folder_name.nil?
-            template_folder = root_vm_folder
+          if cfg.template_folder_name.nil?
+            box_to_search = box_name
+            cfg.template_folder = cfg.vmFolder
           else
-            template_folder = root_vm_folder.traverse!(
-                              config.template_folder_name, RbVmomi::VIM::Folder)
+            box_to_search = cfg.template_folder_name + '/' + box_name
+            cfg.template_folder = cfg.vmfolder.traverse!(
+              cfg.template_folder_name,
+              RbVmomi::VIM::Folder
+            )
           end
 
-          template_name = box_name
+          @logger.debug("Checking for box: #{box_to_search}...")
 
-          # FIXME: Raise a correct exception
-          datastore = dc.find_datastore(
-                      config.datastore_name) or fail 'datastore not found'
-          # FIXME: Raise a correct exception
-          computer = dc.find_compute_resource(
-                      config.computer_name) or fail 'Host not found'
+          # Check for the template object and add it the provider config
+          cfg.template = cfg.datacenter.find_vm(box_to_search)
 
-          network = computer.network.find { |x| x.name == config.network_name }
+          if cfg.template.nil?
+            # Roll a dice to get a winner in the race.
+            sleep_time = rand * (3 - 1) + 1
+            @logger.debug("Sleeping #{sleep_time} to avoid race conditions.")
+            sleep(sleep_time)
 
-          deployer = CachedOvfDeployer.new(
-            config.vcenter_cnx,
-            network,
-            computer,
-            template_folder,
-            vm_folder,
-            datastore
-          )
+            box_dir = env[:machine].box.directory
+            box_ovf = "file://#{box_dir}/#{box_file}.ovf"
 
-          deployer_opts = {
-            :run_without_interruptions => true,
-            :simple_vm_name => true
-          }
+            env[:ui].info("Uploading [#{box_name}]...")
+            @logger.debug("OVF File: #{box_ovf}")
 
-          deployer.upload_ovf_as_template(
-                                          box_ovf,
-                                          template_name,
-                                          deployer_opts)
+            deployer = CachedOvfDeployer.new(
+              cfg.vcenter_cnx,
+              cfg.network,
+              cfg.compute,
+              cfg.template_folder,
+              cfg.vmfolder,
+              cfg.datastore
+            )
+
+            deployer_opts = {
+              :run_without_interruptions  => true,
+              :simple_vm_name             => true
+            }
+
+            deployer.upload_ovf_as_template(
+              box_ovf,
+              box_name,
+              deployer_opts
+            )
+
+            # Re Fetch the template object and add it the provider config
+            cfg.template = cfg.datacenter.find_vm(box_to_search)
+          else
+            @logger.debug('Box already exists at target endpoint')
+          end
+
           # FIXME: Progressbar??
         end
 
         def vcenter_check_inventory(env)
           # Will check each mandatory config value against the vcenter
           # Instance and will setup the global environment config values
-          config = env[:machine].provider_config
-          # FIXME: Raise a correct exception
-          dc = config.vcenter_cnx.serviceInstance.find_datacenter(
-               config.datacenter_name) or fail 'datacenter not found'
 
-          if env[:machine].box.name.to_s.include? '/'
-            box_file = env[:machine].box.name.rpartition('/').last.to_s
-            box_name = env[:machine].box.name.to_s.gsub(/\//, '-')
-          else
-            box_file = env[:machine].box.name.to_s
-            box_name = box_file
-          end
+          cfg = env[:machine].provider_config
+          cnx = cfg.vcenter_cnx
 
-          if config.template_folder_name.nil?
-            box_to_search = box_name
-          else
-            box_to_search = config.template_folder_name + '/' + box_name
-          end
+          # Fetch Datacenter handle and add it to provider config
+          cfg.datacenter = cnx.serviceInstance.find_datacenter(
+            cfg.datacenter_name
+          ) or fail Errors::DatacenterNotFound,
+                    :datacenter_name => cfg.datacenter_name
 
-          @logger.debug("This is the box we're looking for: #{box_to_search}")
+          # Fetch vmFolder handle for the specific Datacenter and add it to
+          # provider config
+          cfg.vmfolder = cfg.datacenter.vmFolder
 
-          config.template_id = dc.find_vm(box_to_search)
+          # Fetch compute resource handle and add it to the provider config
+          cfg.compute = cfg.datacenter.find_compute_resource(
+            cfg.compute_name
+          ) or fail Errors::ComputeNotFound,
+                    :compute_name => cfg.compute_name
 
-          if config.template_id.nil?
-            # Roll a dice to get a winner in the race.
-            sleep_time = rand * (3 - 1) + 1
-            @logger.debug("Sleeping #{sleep_time} to avoid race conditions.")
-            sleep(sleep_time)
+          # Fetch datastore handle and add it to the provider config
+          cfg.datastore = cfg.datacenter.find_datastore(
+            cfg.datastore_name
+          ) or fail Errors::DatastoreNotFound,
+                    :datastore_name => cfg.datastore_name
 
-            env[:ui].info("Uploading [#{box_name}]...")
-            vcenter_upload_box(env)
-          else
-            @logger.debug("Template found at #{box_to_search}")
-          end
+          # Fetch network portgroup handle and add it to the provider config
+          cfg.network = cfg.compute.network.find {
+            |x| x.name == cfg.network_name
+          } or fail Errors::NetworkNotFound,
+                    :network_name => cfg.network_name
+
+          # Use this method to take care of the template/boxes
+          vcenter_upload_box(env)
         end
       end
     end
