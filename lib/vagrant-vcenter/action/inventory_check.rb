@@ -36,7 +36,7 @@ module VagrantPlugins
 
           if cfg.template_folder_name.nil?
             box_to_search = box_name
-            cfg.template_folder = cfg.vmFolder
+            cfg.template_folder = cfg.vmfolder
           else
             box_to_search = cfg.template_folder_name + '/' + box_name
             cfg.template_folder = cfg.vmfolder.traverse!(
