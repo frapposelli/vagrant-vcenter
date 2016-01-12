@@ -1,6 +1,8 @@
 [Vagrant](http://www.vagrantup.com) provider for VMware vCenter®
 =============
 
+[![Join the chat at https://gitter.im/frapposelli/vagrant-vcenter](https://badges.gitter.im/frapposelli/vagrant-vcenter.svg)](https://gitter.im/frapposelli/vagrant-vcenter?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [Version 0.3.2](../../releases/tag/v0.3.2) has been released!
 -------------
 
