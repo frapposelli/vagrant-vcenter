@@ -35,7 +35,11 @@ module VagrantPlugins
           # @logger.debug("Current power state: #{vm.runtime.powerState}")
           vm_name = env[:machine].name
 
-          if vm.runtime.powerState == 'poweredOff'
+          if vm.nil?
+            # If the VM has been cloned/moved, the findByUuid call returns nil
+            @logger.info("VM [#{vm_name}] state is unknown")
+            return :unknown
+          elsif vm.runtime.powerState == 'poweredOff'
             @logger.info("VM [#{vm_name}] is stopped")
             return :stopped
           elsif vm.runtime.powerState == 'poweredOn'
