@@ -50,3 +50,6 @@ en:
         shut it down forcefully, or you can run `vagrant suspend` to simply
         suspend the virtual machine. In either case, to restart it again,
         simply run `vagrant up`.
+      unknown: |-
+        The VM state cannot be retrieved from vCenter. Please contact your
+        vCenter administrator for more informations.
