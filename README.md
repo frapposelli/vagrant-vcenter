@@ -3,7 +3,7 @@
 
 [![Join the chat at https://gitter.im/frapposelli/vagrant-vcenter](https://badges.gitter.im/frapposelli/vagrant-vcenter.svg)](https://gitter.im/frapposelli/vagrant-vcenter?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-[Version 0.3.2](../../releases/tag/v0.3.2) has been released!
+[Version 0.3.3](../../releases/tag/v0.3.3) has been released!
 -------------
 
 Please note that this software is still Alpha/Beta quality and is not recommended for production usage.
@@ -12,7 +12,7 @@ We have a wide array of boxes available at [Vagrant Cloud](https://vagrantcloud.
 
 This plugin supports the universal [```vmware_ovf``` box format](https://github.com/gosddc/packer-post-processor-vagrant-vmware-ovf/wiki/vmware_ovf-Box-Format), that is 100% portable between [vagrant-vcloud](https://github.com/frapposelli/vagrant-vcloud), [vagrant-vcenter](https://github.com/gosddc/vagrant-vcenter) and [vagrant-vcloudair](https://github.com/gosddc/vagrant-vcloudair), no more double boxes!.
 
-Changes in [version 0.3.1](../../releases/tag/v0.3.1) include:
+Changes in [version 0.3.3](../../releases/tag/v0.3.3) include:
 
 Changes
 
@@ -23,17 +23,6 @@ Fixes
 -  Better error management
 -  Fixed some commands in unwanted situations (SSH when machine suspended/off)
 -  Refactored code to avoid code duplication
-
-
-Changes in [version 0.3.0](../../releases/tag/v0.3.0) include:
-
-Fixes
-
-- ```vmware_ovf``` support!
-- You can now specify network using the ```public_network``` notation of Vagrant.
-- Plugin is now operating in parallel, MOAR SPEED!
-- Create the VM folder if it doesn't exist.
-- Several bug fixes.
 
 Install
 -------------
@@ -107,7 +96,7 @@ Vagrant.configure('2') do |config|
                              gateway: '10.250.254.254',
                              dns_server_list: ['8.8.4.4', '8.8.8.8'],
                              dns_suffix_list: ['ad.lab.gosddc.com']
-      
+
       # Let's override some provider settings for specific VMs
       node_config.vm.provider :vcenter do |override|
         # Override number of cpu and memory based on what's in the nodes array
@@ -141,4 +130,4 @@ What is still missing:
 - Some spaghetti code here and there.
 - Bugs, bugs and BUGS!.
 
-If you're a developer and want to lend us a hand, head over to our ```develop``` branch and send us PRs!
+If you're a developer and want to lend us a hand, send us PRs!
