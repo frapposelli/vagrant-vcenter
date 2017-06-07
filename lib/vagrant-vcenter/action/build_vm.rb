@@ -30,7 +30,7 @@ module VagrantPlugins
           end
 
           if cfg.resourcepool_name
-            cfg.compute_rp = compute.resourcePool.resourcePool.find {
+            cfg.compute_rp = cfg.compute.resourcePool.resourcePool.find {
               |f| f.name == cfg.resourcepool_name
             }
           else
