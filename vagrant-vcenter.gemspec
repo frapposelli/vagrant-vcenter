@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.version = VagrantPlugins::VCenter::VERSION
   s.platform = Gem::Platform::RUBY
   s.authors = 'Fabio Rapposelli'
-  s.email = 'fabio@gosddc.com'
+  s.email = 'fabio@rapposelli.org'
   s.homepage = 'https://github.com/frapposelli/vagrant-vcenter'
   s.license = 'MIT'
   s.summary = 'VMware vCenter® Vagrant provider'
@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec-expectations', '~> 2.12.1'
   s.add_development_dependency 'rspec-mocks', '~> 2.12.1'
   s.add_development_dependency 'rubocop'
+  s.add_development_dependency 'code-scanning-rubocop'
 
   s.files = `git ls-files`.split($RS)
   s.executables = s.files.grep(/^bin/) { |f| File.basename(f) }

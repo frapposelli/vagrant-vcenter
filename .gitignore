@@ -7,3 +7,4 @@ doc/*
 Vagrantfile
 puppet/*
 *.gem
+rubocop.sarif
