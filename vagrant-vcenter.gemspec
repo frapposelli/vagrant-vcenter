@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec-expectations', '~> 2.12.1'
   s.add_development_dependency 'rspec-mocks', '~> 2.12.1'
   s.add_development_dependency 'rubocop'
-  s.add_development_dependency 'code-scanning-rubocop'
+  s.add_development_dependency 'code-scanning-rubocop', '~> 0.5'
 
   s.files = `git ls-files`.split($RS)
   s.executables = s.files.grep(/^bin/) { |f| File.basename(f) }
