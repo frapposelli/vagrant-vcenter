@@ -1,5 +1,6 @@
 AllCops:
   NewCops: enable
+  TargetRubyVersion: 2.5
 
 Metrics/MethodLength:
   CountComments: false  # count full line comments?
